@@ -1,0 +1,1394 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>убежище</title>
+    <meta name="copyright" content="Exmoril, 2025-2026">
+    <meta name="description" content="место для отдыха от информационного шума. просто дыши.">
+    <meta name="keywords" content="медитация, релакс, антистресс, спокойствие, отдых, убежище">
+    <meta name="author" content="Exmoril">
+    <meta name="robots" content="index, follow"> 
+    <link rel="canonical" href="https://exmoril.neocities.org">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#050507"> 
+    <meta name="color-scheme" content="dark"> 
+    <meta name="mobile-web-app-capable" content="yes"> 
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"> 
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/svg" href="/favicon.svg">
+    <link rel="apple-touch-icon" href="/favicon.png"> 
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://exmoril.neocities.org/">
+    <meta property="og:title" content="убежище от шума">
+    <meta property="og:description" content="оставь тревоги за экраном. мы никуда не торопимся.">
+    <meta property="og:image" content="https://exmoril.neocities.org/favicon.png">
+    <meta property="og:site_name" content="убежище"> 
+    <meta name="twitter:card" content="summary"> 
+    <meta name="twitter:url" content="https://exmoril.neocities.org/">
+    <meta name="twitter:title" content="убежище от шума">
+    <meta name="twitter:description" content="оставь тревоги за экраном. мы никуда не торопимся.">
+    <meta name="twitter:image" content="https://exmoril.neocities.org/favicon.png">
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #050507;
+            color: #5c5c66;
+            font-family: 'Courier New', Courier, monospace;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            user-select: none;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizeLegibility;
+            cursor: pointer;
+            transition: background 8s ease-in-out, background-color 8s ease-in-out;
+        }
+
+        body.theme-space {
+            animation: ambientSpace 80s infinite alternate ease-in-out, fadeInBody 6s ease-in-out;
+        }
+
+        body.theme-ocean {
+            animation: ambientOcean 80s infinite alternate ease-in-out, fadeInBody 6s ease-in-out;
+        }
+
+        body.theme-forest {
+            animation: ambientForest 80s infinite alternate ease-in-out, fadeInBody 6s ease-in-out;
+        }
+
+        body.theme-sunset {
+            animation: ambientSunset 80s infinite alternate ease-in-out, fadeInBody 6s ease-in-out;
+        }
+
+        body.theme-void {
+            animation: ambientVoid 80s infinite alternate ease-in-out, fadeInBody 6s ease-in-out;
+        }
+
+        body.theme-aurora {
+            animation: ambientAurora 80s infinite alternate ease-in-out, fadeInBody 6s ease-in-out;
+        }
+
+        @keyframes fadeInBody {
+            from { opacity: 0; filter: blur(10px); }
+            to { opacity: 1; filter: blur(0px); }
+        }
+
+        @keyframes ambientSpace {
+            0% { background: radial-gradient(circle at center, #0d0d12 0%, #030305 100%); }
+            50% { background: radial-gradient(circle at center, #150d15 0%, #050307 100%); }
+            100% { background: radial-gradient(circle at center, #0d1515 0%, #030707 100%); }
+        }
+
+        @keyframes ambientOcean {
+            0% { background: radial-gradient(circle at center, #051015 0%, #010305 100%); }
+            50% { background: radial-gradient(circle at center, #0a1b25 0%, #020507 100%); }
+            100% { background: radial-gradient(circle at center, #05151b 0%, #010406 100%); }
+        }
+
+        @keyframes ambientForest {
+            0% { background: radial-gradient(circle at center, #0a120a 0%, #020502 100%); }
+            50% { background: radial-gradient(circle at center, #101c10 0%, #040804 100%); }
+            100% { background: radial-gradient(circle at center, #0d160d 0%, #030603 100%); }
+        }
+
+        @keyframes ambientSunset {
+            0% { background: radial-gradient(circle at center, #1a0b05 0%, #050201 100%); }
+            50% { background: radial-gradient(circle at center, #2a110a 0%, #0a0302 100%); }
+            100% { background: radial-gradient(circle at center, #1f0c0f 0%, #060204 100%); }
+        }
+
+        @keyframes ambientVoid {
+            0% { background: radial-gradient(circle at center, #050505 0%, #000000 100%); }
+            50% { background: radial-gradient(circle at center, #0a0a0a 0%, #020202 100%); }
+            100% { background: radial-gradient(circle at center, #070707 0%, #010101 100%); }
+        }
+
+        @keyframes ambientAurora {
+            0% { background: radial-gradient(circle at center, #081510 0%, #020504 100%); }
+            50% { background: radial-gradient(circle at center, #0f1a1d 0%, #040708 100%); }
+            100% { background: radial-gradient(circle at center, #120e1a 0%, #040307 100%); }
+        }
+
+        #particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        #flash-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #ffffff;
+            opacity: 0;
+            z-index: 99;
+            pointer-events: none;
+            transition: opacity 4s ease-in-out;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            width: 100%;
+        }
+
+        .aura {
+            position: absolute;
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,255,255,0.03) 0%, rgba(0,0,0,0) 70%);
+            opacity: 0;
+            transition: opacity 6s ease-in-out;
+            pointer-events: none;
+        }
+
+        .orb {
+            position: absolute;
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 40% 40%, #2a2a30 0%, #050507 60%, #000 100%);
+            box-shadow: 0 0 40px rgba(255, 255, 255, 0.01); 
+            transition: all 8s ease-in-out;
+        }
+
+        .orb.active {
+            animation: breatheOrb 16s infinite ease-in-out, morphOrb 24s infinite ease-in-out alternate;
+        }
+
+        .orb::before {
+            content: '';
+            position: absolute;
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%;
+            border-radius: inherit;
+            background-image: url('map.svg');
+            background-size: 200% 100%;
+            opacity: 0.05; /* Еле заметен до старта */
+            filter: invert(1);
+            mix-blend-mode: overlay;
+            animation: spinGlobe 40s linear infinite;
+            pointer-events: none;
+            transition: opacity 8s ease-in-out;
+        }
+
+        .orb.active::before {
+            opacity: 0.25;
+        }
+
+        .volume-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        #volumeSlider {
+            width: 0px;
+            opacity: 0;
+            transition: opacity 0.5s, width 0.5s;
+            cursor: pointer;
+            accent-color: #a0a0b0;
+        }
+
+        .volume-container:hover #volumeSlider {
+            width: 70px;
+            opacity: 0.7;
+        }
+
+        #volumeSlider:hover {
+            opacity: 1;
+        }
+
+        @media (hover: none) {
+            #volumeSlider {
+                width: 70px;
+                opacity: 0.7;
+            }
+        }
+
+        .ripple {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.4);
+            border-radius: 50%;
+            transform: scale(0);
+            animation: ripple-anim 2s ease-out;
+            pointer-events: none;
+            z-index: 15;
+        }
+        @keyframes ripple-anim {
+            to {
+                transform: scale(25);
+                opacity: 0;
+            }
+        }
+
+        @keyframes spinGlobe {
+            0% { background-position: 0% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        body.theme-space .orb.active {
+            background: radial-gradient(circle at 35% 35%, #4a4a55 0%, #15151c 50%, #000 100%);
+            box-shadow: inset -15px -15px 40px rgba(0,0,0,0.8), inset 10px 10px 20px rgba(255,255,255,0.05), 0 0 100px rgba(255, 255, 255, 0.08);
+        }
+        body.theme-ocean .orb.active {
+            background: radial-gradient(circle at 35% 35%, #2b5c75 0%, #0a1b25 50%, #000 100%);
+            box-shadow: inset -15px -15px 40px rgba(0,0,0,0.8), inset 10px 10px 20px rgba(255,255,255,0.05), 0 0 100px rgba(43, 92, 117, 0.15);
+        }
+        body.theme-forest .orb.active {
+            background: radial-gradient(circle at 35% 35%, #3a5c3a 0%, #101c10 50%, #000 100%);
+            box-shadow: inset -15px -15px 40px rgba(0,0,0,0.8), inset 10px 10px 20px rgba(255,255,255,0.05), 0 0 100px rgba(58, 92, 58, 0.15);
+        }
+        body.theme-sunset .orb.active {
+            background: radial-gradient(circle at 35% 35%, #8c4a35 0%, #2a110a 50%, #000 100%);
+            box-shadow: inset -15px -15px 40px rgba(0,0,0,0.8), inset 10px 10px 20px rgba(255,255,255,0.05), 0 0 100px rgba(140, 74, 53, 0.15);
+        }
+        body.theme-void .orb.active {
+            background: radial-gradient(circle at 35% 35%, #1a1a1a 0%, #050505 50%, #000 100%);
+            box-shadow: inset -15px -15px 40px rgba(0,0,0,0.95), inset 5px 5px 10px rgba(255,255,255,0.02), 0 0 60px rgba(255, 255, 255, 0.03);
+        }
+        body.theme-aurora .orb.active {
+            background: radial-gradient(circle at 35% 35%, #358c75 0%, #0f1a1d 50%, #000 100%);
+            box-shadow: inset -15px -15px 40px rgba(0,0,0,0.8), inset 10px 10px 20px rgba(255,255,255,0.05), 0 0 100px rgba(53, 140, 117, 0.15);
+        }
+
+        .aura.active {
+            opacity: 1;
+            animation: breatheAura 16s infinite ease-in-out;
+        }
+
+        @keyframes breatheOrb {
+            0%, 100% { 
+                transform: translate(-50%, -50%) scale(0.85) rotate(-5deg); 
+                filter: brightness(0.8);
+            }
+            50% { 
+                transform: translate(-50%, -50%) scale(1.2) rotate(10deg); 
+                filter: brightness(1.3);
+            }
+        }
+
+        @keyframes breatheAura {
+            0%, 100% { transform: translate(-50%, -50%) scale(0.9); opacity: 0.1; }
+            50% { transform: translate(-50%, -50%) scale(1.8); opacity: 0.7; }
+        }
+
+        @keyframes morphOrb {
+            0% { border-radius: 50%; }
+            33% { border-radius: 58% 42% 48% 52% / 49% 55% 45% 51%; }
+            66% { border-radius: 45% 55% 52% 48% / 54% 46% 54% 46%; }
+            100% { border-radius: 50%; }
+        }
+
+        .text-container {
+            position: absolute;
+            top: 65%;
+            width: 90%;
+            max-width: 800px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+            z-index: 10;
+        }
+
+        .text-line {
+            opacity: 0;
+            filter: blur(12px);
+            transform: translateY(20px);
+            transition: opacity 6s ease-in-out, filter 6s ease-in-out, transform 8s ease-out;
+            text-transform: lowercase;
+            text-align: center;
+            width: 100%;
+        }
+
+        .text-line.hidden-mode {
+            display: none;
+        }
+
+        .text-line.visible {
+            opacity: 1;
+            filter: blur(0px);
+            transform: translateY(0) scale(1.02);
+        }
+
+        #message {
+            font-size: 20px;
+            letter-spacing: 7px;
+            line-height: 1.8;
+            color: #f0f0f5;
+            text-shadow: 0 4px 15px rgba(0, 0, 0, 0.6), 0 0 25px rgba(255, 255, 255, 0.15);
+            font-weight: normal;
+        }
+
+        #dreamText {
+            font-size: 16px;
+            letter-spacing: 5px;
+            line-height: 1.6;
+            color: #b8b8c8;
+            text-shadow: 0 4px 10px rgba(0, 0, 0, 0.5), 0 0 15px rgba(255, 255, 255, 0.1);
+        }
+
+        #breatheText {
+            font-size: 24px;
+            letter-spacing: 10px;
+            color: #ffffff;
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.7), 0 0 30px rgba(255, 255, 255, 0.25);
+            font-weight: normal;
+            display: none;
+            opacity: 0;
+            filter: blur(8px);
+            transition: opacity 4s ease-in-out, transform 8s ease-in-out, filter 4s ease-in-out;
+            transform: scale(0.9);
+        }
+
+        #breatheText.active-mode {
+            display: block;
+        }
+
+        #breatheText.inhale {
+            opacity: 1;
+            filter: blur(0px);
+            transform: scale(1.15);
+        }
+
+        #breatheText.exhale {
+            opacity: 0.4;
+            filter: blur(2px);
+            transform: scale(0.9);
+        }
+
+        #timer {
+            position: absolute;
+            bottom: 45px;
+            width: 100%;
+            text-align: center;
+            font-size: 13px;
+            color: #6a6a75;
+            z-index: 10;
+            letter-spacing: 4px;
+            transition: opacity 6s ease-in-out;
+            opacity: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.5);
+        }
+        
+        #timer.visible {
+            opacity: 1;
+        }
+
+        .total-time {
+            font-size: 11px;
+            color: #555560;
+            letter-spacing: 3px;
+        }
+
+        #hint {
+            position: absolute;
+            top: 45px;
+            width: 100%;
+            text-align: center;
+            font-size: 15px;
+            color: #a0a0b0;
+            z-index: 2;
+            letter-spacing: 6px;
+            transition: opacity 5s ease-in-out, filter 5s ease-in-out;
+            pointer-events: none;
+            animation: pulseHint 8s infinite ease-in-out; 
+        }
+
+        @keyframes pulseHint {
+            0%, 100% { opacity: 0.2; filter: blur(4px); }
+            50% { opacity: 0.8; filter: blur(0px); }
+        }
+
+        #controls {
+            position: absolute;
+            bottom: 35px;
+            right: 45px;
+            font-size: 13px;
+            color: #7a7a85;
+            z-index: 20;
+            letter-spacing: 3px;
+            opacity: 0;
+            transition: opacity 3s ease-in-out;
+            pointer-events: none;
+            display: flex;
+            gap: 25px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+            max-width: 60%;
+        }
+
+        #controls.visible {
+            opacity: 0.4;
+            pointer-events: auto;
+        }
+
+        #controls.visible:hover {
+            opacity: 1;
+        }
+
+        .control-btn {
+            cursor: pointer;
+            transition: color 0.5s ease-in-out, text-shadow 0.5s ease-in-out;
+        }
+
+        .control-btn:hover {
+            color: #ffffff;
+            text-shadow: 0 0 10px rgba(255,255,255,0.3);
+        }
+
+        noscript {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #fff;
+            z-index: 999;
+            letter-spacing: 2px;
+        }
+        
+        footer {
+            position: absolute;
+            bottom: 12px;
+            width: 100%;
+            text-align: center;
+            font-size: 11px;
+            color: #555560;
+            letter-spacing: 3px;
+            z-index: 20;
+            opacity: 0;
+            transition: opacity 6s ease-in-out;
+            pointer-events: auto;
+        }
+
+        footer.visible {
+            opacity: 0.4;
+        }
+
+        footer:hover {
+            opacity: 1;
+        }
+
+        footer a {
+            color: #6a6a75;
+            text-decoration: none;
+            transition: color 0.5s ease-in-out, text-shadow 0.5s ease-in-out;
+        }
+
+        footer a:hover {
+            color: #ffffff;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+        }
+    </style>
+</head>
+<body class="theme-space">
+    <noscript>для погружения необходимо включить javascript.</noscript>
+    
+    <div id="flash-overlay"></div>
+    <canvas id="particles"></canvas>
+    
+    <div id="hint">коснись, чтобы раствориться</div>
+    
+    <div class="container">
+        <div class="aura"></div>
+        <div class="orb"></div>
+        
+        <div class="text-container">
+            <div id="message" class="text-line"></div>
+            <div id="dreamText" class="text-line"></div>
+            <div id="breatheText">вдох</div>
+        </div>
+    </div>
+    
+    <div id="timer">
+        <div id="sessionTimer"></div>
+        <div id="totalTimer" class="total-time"></div>
+    </div>
+
+    <div id="controls">
+        <span class="control-btn" id="breatheBtn">дыхание</span>
+        <span class="control-btn" id="themeBtn">тема</span>
+        <span class="control-btn" id="trackBtn">след. трек</span>
+        <div class="volume-container">
+            <span class="control-btn" id="muteBtn">звук</span>
+            <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="0.35">
+        </div>
+        <span class="control-btn" id="fsBtn">экран</span>
+        <span class="control-btn" id="resetBtn">сброс</span>
+    </div>
+    
+    <footer>
+      <p>© 2025–2026 Exmoril. Все права защищены. <a href="LICENSE.txt" target="_blank">Авторские права и Условия использования.</a> </p>
+    </footer>
+    
+    <script>
+        const playlist = [
+            "https://cdn.jsdelivr.net/gh/Exmoril-Neocities/Exmoril_Neocities@main/music.mp3",
+            "https://cdn.jsdelivr.net/gh/Exmoril-Neocities/Exmoril_Neocities@main/music1.mp3",
+            "https://cdn.jsdelivr.net/gh/Exmoril-Neocities/Exmoril_Neocities@main/music2.mp3",
+            "https://cdn.jsdelivr.net/gh/Exmoril-Neocities/Exmoril_Neocities@main/music3.mp3",
+            "https://cdn.jsdelivr.net/gh/Exmoril-Neocities/Exmoril_Neocities@main/music4.mp3",
+            "https://cdn.jsdelivr.net/gh/Exmoril-Neocities/Exmoril_Neocities@main/music5.mp3",
+            "https://cdn.jsdelivr.net/gh/Exmoril-Neocities/Exmoril_Neocities@main/music6.mp3",
+            "https://cdn.jsdelivr.net/gh/Exmoril-Neocities/Exmoril_Neocities@main/music7.mp3",
+            "https://cdn.jsdelivr.net/gh/Exmoril-Neocities/Exmoril_Neocities@main/music8.mp3",
+            "https://cdn.jsdelivr.net/gh/Exmoril-Neocities/Exmoril_Neocities@main/music9.mp3",
+            "https://cdn.jsdelivr.net/gh/Exmoril-Neocities/Exmoril_Neocities@main/music10.mp3",
+            "https://cdn.jsdelivr.net/gh/Exmoril-Neocities/Exmoril_Neocities@main/music11.mp3",
+            "https://cdn.jsdelivr.net/gh/Exmoril-Neocities/Exmoril_Neocities@main/music12.mp3",
+            "https://cdn.jsdelivr.net/gh/Exmoril-Neocities/Exmoril_Neocities@main/music13.mp3",
+            "https://cdn.jsdelivr.net/gh/Exmoril-Neocities/Exmoril_Neocities@main/music14.mp3",
+            "https://cdn.jsdelivr.net/gh/Exmoril-Neocities/Exmoril_Neocities@main/music15.mp3",
+            "https://cdn.jsdelivr.net/gh/Exmoril-Neocities/Exmoril_Neocities@main/music16.mp3",
+            "https://cdn.jsdelivr.net/gh/Exmoril-Neocities/Exmoril_Neocities@main/music17.mp3",
+            "https://cdn.jsdelivr.net/gh/Exmoril-Neocities/Exmoril_Neocities@main/music18.mp3",
+            "https://cdn.jsdelivr.net/gh/Exmoril-Neocities/Exmoril_Neocities@main/music19.mp3",
+            "https://cdn.jsdelivr.net/gh/Exmoril-Neocities/Exmoril_Neocities@main/music20.mp3",
+            "https://cdn.jsdelivr.net/gh/Exmoril-Neocities/Exmoril_Neocities@main/music21.mp3",
+            "https://cdn.jsdelivr.net/gh/Exmoril-Neocities/Exmoril_Neocities@main/music22.mp3",
+            "https://cdn.jsdelivr.net/gh/Exmoril-Neocities/Exmoril_Neocities@main/music23.mp3",
+            "https://cdn.jsdelivr.net/gh/Exmoril-Neocities/Exmoril_Neocities@main/music24.mp3",
+            "https://cdn.jsdelivr.net/gh/Exmoril-Neocities/Exmoril_Neocities@main/music25.mp3",
+            "https://cdn.jsdelivr.net/gh/Exmoril-Neocities/Exmoril_Neocities@main/music26.mp3",
+            "https://cdn.jsdelivr.net/gh/Exmoril-Neocities/Exmoril_Neocities@main/music27.mp3",
+            "https://cdn.jsdelivr.net/gh/Exmoril-Neocities/Exmoril_Neocities@main/music28.mp3",
+            "https://cdn.jsdelivr.net/gh/Exmoril-Neocities/Exmoril_Neocities@main/music29.mp3",
+            "https://cdn.jsdelivr.net/gh/Exmoril-Neocities/Exmoril_Neocities@main/music30.mp3",
+            "https://cdn.jsdelivr.net/gh/Exmoril-Neocities/Exmoril_Neocities@main/music31.mp3",
+            "https://cdn.jsdelivr.net/gh/Exmoril-Neocities/Exmoril_Neocities@main/music32.mp3",
+            "https://cdn.jsdelivr.net/gh/Exmoril-Neocities/Exmoril_Neocities@main/music33.mp3",
+            "https://cdn.jsdelivr.net/gh/Exmoril-Neocities/Exmoril_Neocities@main/music34.mp3",
+            "https://cdn.jsdelivr.net/gh/Exmoril-Neocities/Exmoril_Neocities@main/music35.mp3",
+            "https://cdn.jsdelivr.net/gh/Exmoril-Neocities/Exmoril_Neocities@main/music36.mp3",
+            "https://cdn.jsdelivr.net/gh/Exmoril-Neocities/Exmoril_Neocities@main/music37.mp3",
+            "https://cdn.jsdelivr.net/gh/Exmoril-Neocities/Exmoril_Neocities@main/music38.mp3",
+            "https://cdn.jsdelivr.net/gh/Exmoril-Neocities/Exmoril_Neocities@main/music39.mp3"
+        ];
+
+        const messages = [
+            "представь тихий шелест волн на рассвете",
+            "вспомни мягкость любимого теплого свитера",
+            "ощути запах свежезаваренного кофе утром",
+            "вообрази, как снежинка тает на твоей ладони",
+            "послушай, как капли дождя стучат по крыше",
+            "представь бесконечное поле цветущих ромашек",
+            "вспомни приятную прохладу чистого постельного белья",
+            "ощути, как теплый ветер касается твоего лица",
+            "вообрази мерцание далеких маяков в ночи",
+            "посмотри, как медленно плывут пушистые облака",
+            "вспомни аромат соснового леса после грозы",
+            "представь, что идешь босиком по теплому песку",
+            "услышь далекий, успокаивающий шум водопада",
+            "ощути гладкость морских камушков в руке",
+            "вообрази себя на вершине горы над облаками",
+            "вспомни вкус сладкой земляники в детстве",
+            "послушай треск поленьев в ночном костре",
+            "представь мягкий свет настольной лампы в полумраке",
+            "ощути спокойствие спящего зимнего леса",
+            "вообрази, как солнце пробивается сквозь листву",
+            "вспомни запах старых страниц любимой книги",
+            "представь медленный танец светлячков над рекой",
+            "почувствуй теплое дыхание летнего вечера",
+            "услышь, как ветер гудит в высоких мачтах",
+            "вообрази бесконечную гладь спокойного озера",
+            "ощути легкость летящего пушистого одуванчика",
+            "представь, как вечерние тени ложатся на стены",
+            "вспомни тишину пустой, заснеженной улицы",
+            "посмотри на узоры мороза на зимнем стекле",
+            "вообрази, что качаешься в гамаке под яблоней",
+            "ощути запах влажного мха в глубокой чаще",
+            "услышь, как мягко шуршит камыш у воды",
+            "представь теплый свет свечи в темной комнате",
+            "вспомни прохладу тени в жаркий полдень",
+            "вообрази, как луна освещает спящую долину",
+            "ощути тяжесть уютного пледа на плечах",
+            "послушай мерное дыхание спящего рядом кота",
+            "представь, что плывешь на лодке по тихой реке",
+            "вспомни аромат свежей выпечки ранним утром",
+            "вообрази золотые блики солнца на воде",
+            "ощути спокойствие глубокой, темной ночи",
+            "представь, как падающая звезда чертит небо",
+            "услышь тихое эхо своих шагов в пустом зале",
+            "вспомни запах скошенной травы на лугу",
+            "вообрази мягкие персиковые цвета заката",
+            "ощути, как вода мягко омывает твои ноги",
+            "представь звенящую тишину перед самым рассветом",
+            "вспомни приятную усталость после долгой прогулки",
+            "вообрази, как ветер играет с высокой травой",
+            "послушай шепот листьев в старом саду",
+            "почувствуй мягкость утреннего тумана",
+            "представь, как тает лед на весеннем солнце",
+            "вспомни тепло кошачьей лапки на твоей руке",
+            "ощути, как затихает город за окном",
+            "послушай далекий гудок вечернего поезда",
+            "вообрази аромат корицы и печеных яблок",
+            "вспомни, как легко дышится после летнего ливня",
+            "представь мягкое свечение фонарей в снегопад",
+            "посмотри на танец пылинок в солнечном луче",
+            "ощути гладкость деревянных перил под рукой",
+            "вспомни безмятежность долгой поездки на машине",
+            "вообрази, как капли росы дрожат на паутине",
+            "послушай тихое тиканье старых настенных часов",
+            "представь теплую чашку какао в зимний вечер",
+            "вспомни радость от найденной старой фотографии",
+            "ощути, как вечерняя прохлада ложится на плечи",
+            "вообрази тихий плеск весел по воде",
+            "посмотри на глубокий синий цвет сумерек",
+            "вспомни звук перелистывания хрустящих страниц",
+            "представь нежное прикосновение птичьего перышка",
+            "послушай, как мурлычет закипающий чайник",
+            "вообрази тепло нагретого солнцем камня",
+            "ощути невесомость, закрыв глаза",
+            "вспомни запах смолы в нагретом хвойном лесу",
+            "представь, как облака отражаются в лужах",
+            "вообрази тихое журчание лесного ручья",
+            "вспомни мягкость пушистого полотенца после душа",
+            "ощути тепло кружки с травяным чаем в ладонях",
+            "представь легкое покачивание лодки на зеркальной глади",
+            "послушай, как шуршат песчинки под набегающей волной",
+            "вспомни запах морозного воздуха и свежего снега",
+            "вообрази бескрайнее звездное небо над пустыней",
+            "ощути, как солнечный зайчик скользит по твоей руке",
+            "представь мягкий хруст сухих листьев под ногами",
+            "посмотри на гипнотический танец пламени в камине",
+            "вспомни вкус горячего хлеба с хрустящей корочкой",
+            "вообрази спокойное, размеренное дыхание океана",
+            "ощути прохладу и гладкость шелковой ткани",
+            "представь, как капли дождя рисуют дорожки на стекле",
+            "послушай безмятежное утреннее пение птиц",
+            "вспомни аромат сушеных трав и полевых цветов",
+            "вообрази медленный полет бумажного змея в небе",
+            "ощути приятную тяжесть старинной монеты в руке",
+            "представь густой, обволакивающий туман над рекой",
+            "посмотри на игру теней от пламени свечи",
+            "вспомни звук далекой грозы теплым летним вечером",
+            "вообрази, как идешь по мягкому ковру из мха",
+            "ощути тепло древесины, нагретой за день на солнце",
+            "представь запах растопленной бани и березовых веников",
+            "послушай мерный стук колес поезда вдалеке",
+            "вспомни чувство полета на качелях в детстве",
+            "вообрази тихую, залитую лунным светом лесную поляну",
+            "ощути, как мелкий, теплый дождь касается кожи",
+            "представь звук лопающихся пузырьков в горячем шоколаде",
+            "посмотри, как распускаются бутоны вишни весной",
+            "вспомни запах свежих опилок в столярной мастерской",
+            "вообрази плавное падение первого снега в безветрие",
+            "ощути, как вода в озере мягко поддерживает твое тело",
+            "представь умиротворяющий гул шмеля над клевером",
+            "послушай, как тихо скрипит старое деревянное кресло",
+            "вспомни вкус ледяной колодезной воды в жару",
+            "вообрази бескрайнее море пушистых облаков под крылом",
+            "ощути запах старой, нагретой солнцем хвои",
+            "представь мягкое свечение лунной дорожки на море",
+            "посмотри на неспешный танец водорослей на дне",
+            "вспомни чувство абсолютной безопасности в детской кровати",
+            "вообрази, как солнечный свет струится сквозь воду",
+            "ощути гладкость и прохладу мраморной ступени",
+            "представь далекий, приглушенный звон колоколов",
+            "послушай тихое шуршание шин по мокрому асфальту",
+            "вспомни аромат ванили и теплого молока",
+            "вообрази, как растворяешься в густой вечерней синеве",
+            "ощути легкое покалывание морозного воздуха на щеках",
+            "представь, что паришь в невесомости среди звезд",
+            "посмотри на медленно остывающие угли костра",
+            "вспомни звук ветра, гуляющего в пустом доме",
+            "вообрази, как мягкая волна смывает следы на песке",
+            "ощути безграничный покой этого мгновения",
+            "представь, что время вокруг тебя почти остановилось"
+        ];
+        
+        const dreamPrompts = [
+            "вообрази, что ты — облако, плывущее над горами",
+            "свет этих звезд путешествовал миллионы лет",
+            "вспомни запах мокрой земли после теплого дождя",
+            "ощути, как стираются границы комнаты",
+            "представь бесконечное темное море",
+            "послушай тишину между звуками",
+            "здесь существует только этот момент",
+            "вспомни тепло солнечного луча на коже",
+            "представь утренний туман над тихим озером",
+            "почувствуй прохладный ветер в волосах",
+            "посмотри, как медленно падают осенние листья",
+            "вообрази себя деревом с глубокими корнями",
+            "светлячки танцуют в ночном лесу",
+            "ощути мягкость мха под босыми ногами",
+            "представь, что плывешь по спокойной реке",
+            "капли дождя медленно стекают по стеклу",
+            "созерцай бесконечное звездное небо",
+            "снежинки медленно тают на твоих ладонях",
+            "услышь шелест страниц старой книги",
+            "представь теплый песок на пустынном пляже",
+            "солнце медленно опускается за горизонт",
+            "ветер качает высокие травы",
+            "представь полет птицы над бескрайним лесом",
+            "ощути тепло чашки чая в ладонях",
+            "услышь, как уютно трещит огонь в камине",
+            "вообрази глубокий синий цвет океана",
+            "вспомни мерный звук прибоя на закате",
+            "лунный свет мягко касается твоего лица",
+            "представь, как распускается цветок в замедленной съемке",
+            "пройдись мысленно по теплому летнему лугу",
+            "ощути невесомость, словно паришь в космосе",
+            "услышь далекое пение китов в глубине",
+            "посмотри на медленный танец пылинок в луче света",
+            "представь прохладу прозрачного горного ручья",
+            "вдохни аромат свежескошенной травы",
+            "смотри, как облака плавно меняют форму в небе",
+            "вспомни хруст сухого снега под ногами в зимнем лесу",
+            "согревающие лучи солнца на твоих закрытых веках",
+            "вообрази бесконечное поле цветущей лаванды",
+            "как капля росы скатывается по зеленому листу",
+            "далекий, успокаивающий шум поезда в ночной тишине",
+            "ощути свежий запах моря и соли в воздухе",
+            "представь, как лунная дорожка мерцает на глади воды",
+            "вспомни густой хвойный аромат соснового бора",
+            "послушай, как мягко шуршит камыш у реки",
+            "ощути прохладу и тяжесть гладкого камня в ладони",
+            "представь бескрайнее поле пшеницы, волнующееся на ветру",
+            "вспомни гулкое эхо в пустом просторном зале",
+            "представь, как густой туман медленно прячет очертания гор",
+            "посмотри на мерцание городских огней издалека",
+            "вообрази звук падающих капель в глубокой, тихой пещере",
+            "представь, что лежишь на теплой земле и смотришь в космос",
+            "услышь далекий, приглушенный перезвон музыки ветра",
+            "вспомни бархатистую текстуру персика в руках",
+            "созерцай плавное течение реки, уносящей опавшие листья",
+            "представь, как крупный снег бесшумно укрывает спящий город",
+            "почувствуй тяжелое, теплое одеяло холодным утром",
+            "вообрази себя песчинкой на дне спокойного океана",
+            "вспомни запах свежеиспеченного хлеба из пекарни",
+            "посмотри, как тени удлиняются в предвечернем солнце",
+            "представь узоры инея на замерзшем окне",
+            "послушай ритмичное мурлыканье спящего кота",
+            "вообрази, как краски акварели медленно расплываются в воде",
+            "ощути легкое покачивание лодки на тихой воде",
+            "вспомни, как пахнет воздух в первые секунды летней грозы",
+            "представь золотую пыльцу, кружащуюся над цветком",
+            "погрузись в созерцание тлеющих углей догорающего костра",
+            "почувствуй гладкость отполированного морем стекла",
+            "вообрази, что летишь на воздушном шаре над лесом",
+            "вспомни, как пахнет мокрый асфальт после дождя",
+            "представь мерцание северного сияния в ночном небе",
+            "ощути прохладную тяжесть старинного ключа в ладони",
+            "послушай, как мягко трещит лед на замерзшем озере",
+            "вообрази глубокую тишину пустой библиотеки",
+            "представь теплый солнечный зайчик на белой стене",
+            "вспомни звук капель, медленно срывающихся с весел",
+            "ощути, как шаги утопают в мягком, густом мху",
+            "посмотри, как плавно кружится в воздухе осенний лист",
+            "вообрази себя хранителем одинокого маяка",
+            "вспомни сладкий, медовый запах спелых абрикосов",
+            "представь тихую мелодию старой музыкальной шкатулки",
+            "ощути умиротворение пустой вечерней набережной",
+            "послушай, как переговариваются кроны высоких деревьев",
+            "вообрази медленный танец пыли в луче старого проектора",
+            "вспомни свежесть хрустящего яблока в летний день",
+            "представь, как лунный свет серебрит верхушки елей",
+            "ощути тепло костра на своем лице холодной ночью",
+            "послушай далекий гул самолета высоко в ясном небе",
+            "вообрази лабиринт из высоких зеленых изгородей",
+            "вспомни запах свежей типографской краски в новой книге",
+            "представь, как идешь сквозь мягкий, теплый снегопад",
+            "ощути легкость скольжения коньков по гладкому льду",
+            "посмотри на золотистые искры в нагретом янтаре",
+            "вообрази тихое утро в домике на краю земли",
+            "вспомни шероховатость морской ракушки, выброшенной на берег",
+            "представь, как ветер колышет белые занавески на открытом окне",
+            "ощути запах цветущей сирени майским вечером",
+            "послушай, как гулко стучат капли по зонту",
+            "вообрази неспешный бег времени в старинном замке",
+            "вспомни вкус черники, сорванной прямо с куста",
+            "представь глубокий вдох прохладного горного воздуха",
+            "ощути спокойствие, глядя на бескрайние пески пустыни",
+            "посмотри, как расходится кругами вода от брошенного камня",
+            "вообрази, что стоишь под кроной тысячелетнего дуба",
+            "вспомни ощущение теплого песка, утекающего сквозь пальцы",
+            "представь медленное вращение огромного колеса обозрения",
+            "ощути мягкость пушистого ковра под босыми ногами",
+            "послушай, как тихо трепещут крылья ночной бабочки",
+            "вообрази затерянный остров посреди безмятежного океана",
+            "вспомни запах озона в воздухе перед сильной грозой",
+            "представь, как погружаешь руки в прохладную речную воду",
+            "ощути тепло кружки, согревающей озябшие пальцы",
+            "посмотри на игру солнечных лучей в хрустальной призме",
+            "вообрази медленное течение времени в подводном лесу",
+            "вспомни вкус ледяного лимонада в душный полдень",
+            "представь, как гладишь бархатистую морду лошади",
+            "ощути спокойную уверенность высокой, неприступной скалы",
+            "послушай мерное потрескивание остывающей печи",
+            "вообрази, как паришь над бескрайней снежной равниной",
+            "вспомни запах скошенного сена, сохнущего на солнце",
+            "представь, что весь мир сейчас спит, кроме тебя",
+            "ощути мягкость вечерних сумерек, обнимающих город",
+            "посмотри, как плавно гаснет последняя звезда на утреннем небе",
+            "вообрази тихий, уединенный сад, полный цветущих роз",
+            "вспомни радость от созерцания двойной радуги",
+            "представь, как ветер приносит запах близкого моря",
+            "ощути бездонную глубину ночного космоса над головой",
+            "послушай, как тишина постепенно заполняет комнату",
+            "вообрази, что твое дыхание сливается с дыханием ветра",
+            "вспомни теплое чувство возвращения в родной дом",
+            "представь, как все заботы растворяются в лучах утреннего солнца",
+            "ощути себя частью этой бесконечной, спокойной вселенной",
+            "просто позволь этому мгновению длиться вечно"
+        ];
+
+        const themes = ['theme-space', 'theme-ocean', 'theme-forest', 'theme-sunset', 'theme-void', 'theme-aurora'];
+        
+        const msgElement = document.getElementById('message');
+        const dreamElement = document.getElementById('dreamText');
+        const breatheElement = document.getElementById('breatheText');
+        const hint = document.getElementById('hint');
+        const orb = document.querySelector('.orb');
+        const aura = document.querySelector('.aura');
+        const timerContainer = document.getElementById('timer');
+        const sessionTimer = document.getElementById('sessionTimer');
+        const totalTimer = document.getElementById('totalTimer');
+        const flashOverlay = document.getElementById('flash-overlay');
+        const controls = document.getElementById('controls');
+        
+        const muteBtn = document.getElementById('muteBtn');
+        const fsBtn = document.getElementById('fsBtn');
+        const themeBtn = document.getElementById('themeBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const trackBtn = document.getElementById('trackBtn');
+        const breatheBtn = document.getElementById('breatheBtn');
+        
+        const audio1 = new Audio();
+        const audio2 = new Audio();
+        let activeAudio = audio1;
+        let nextAudio = audio2;
+        
+        let trackIndex = Math.floor(Math.random() * playlist.length);
+        let isPlaying = false;
+        let isCrossfading = false;
+        
+        let isGlobalMuted = localStorage.getItem('sanctuaryMuted') === 'true';
+        muteBtn.textContent = isGlobalMuted ? "тишина" : "звук";
+        
+        const CROSSFADE_TIME = 4;
+        let savedVolume = localStorage.getItem('sanctuaryVolume');
+        let MAX_VOLUME = savedVolume !== null ? parseFloat(savedVolume) : 0.35;
+        const volumeSlider = document.getElementById('volumeSlider');
+        volumeSlider.value = isGlobalMuted ? 0 : MAX_VOLUME;
+
+        volumeSlider.addEventListener('input', (e) => {
+            e.stopPropagation();
+            MAX_VOLUME = parseFloat(e.target.value);
+            localStorage.setItem('sanctuaryVolume', MAX_VOLUME);
+            
+            if (MAX_VOLUME === 0) {
+                isGlobalMuted = true;
+                muteBtn.textContent = "тишина";
+            } else {
+                isGlobalMuted = false;
+                muteBtn.textContent = "звук";
+            }
+            localStorage.setItem('sanctuaryMuted', isGlobalMuted);
+            if (activeAudio) activeAudio.volume = MAX_VOLUME;
+        });
+
+        let msgIndex = 0;
+        let dreamIndex = 0;
+        let themeIndex = parseInt(localStorage.getItem('sanctuaryThemeIndex')) || 0;
+        document.body.className = themes[themeIndex];
+        
+        let isBreathingMode = false;
+        let minutes = 0;
+        let totalMinutes = parseInt(localStorage.getItem('sanctuaryTotalTime')) || 0;
+        
+        let cursorTimeout;
+        let msgInterval = null;
+        let dreamInterval = null;
+        let breatheInterval = null;
+        let audioErrorCount = 0;
+
+        function startTextTimers() {
+            clearInterval(msgInterval);
+            clearInterval(dreamInterval);
+            msgInterval = setInterval(() => {
+                msgIndex = (msgIndex + 1) % messages.length;
+                changeTextSmoothly(msgElement, messages, msgIndex);
+            }, 22000); 
+            dreamInterval = setInterval(() => {
+                dreamIndex = (dreamIndex + 1) % dreamPrompts.length;
+                changeTextSmoothly(dreamElement, dreamPrompts, dreamIndex);
+            }, 32000);
+        }
+
+        function doCrossfade() {
+            if (isCrossfading) return;
+            isCrossfading = true;
+
+            trackIndex = (trackIndex + 1) % playlist.length;
+            nextAudio.src = playlist[trackIndex];
+            nextAudio.volume = 0;
+            nextAudio.muted = isGlobalMuted;
+            
+            if (document.hidden) {
+                activeAudio.pause();
+                activeAudio.currentTime = 0;
+                nextAudio.volume = MAX_VOLUME;
+                nextAudio.play().catch(() => {});
+                
+                let temp = activeAudio;
+                activeAudio = nextAudio;
+                nextAudio = temp;
+                isCrossfading = false;
+                return;
+            }
+
+            nextAudio.play().catch(() => {});
+
+            const steps = 40;
+            const stepTime = (CROSSFADE_TIME * 1000) / steps;
+            const volStep = MAX_VOLUME / steps;
+            let currentStep = 0;
+
+            const fadeInterval = setInterval(() => {
+                currentStep++;
+                if (activeAudio.volume - volStep > 0) activeAudio.volume -= volStep;
+                else activeAudio.volume = 0;
+
+                if (nextAudio.volume + volStep < MAX_VOLUME) nextAudio.volume += volStep;
+                else nextAudio.volume = MAX_VOLUME;
+
+                if (currentStep >= steps) {
+                    clearInterval(fadeInterval);
+                    activeAudio.pause();
+                    activeAudio.currentTime = 0;
+                    
+                    let temp = activeAudio;
+                    activeAudio = nextAudio;
+                    nextAudio = temp;
+                    isCrossfading = false;
+                }
+            }, stepTime);
+        }
+
+        function bindAudioEvents(audioObj) {
+            audioObj.addEventListener('timeupdate', () => {
+                if (audioObj === activeAudio && audioObj.duration) {
+                    if (audioObj.duration - audioObj.currentTime <= CROSSFADE_TIME && !isCrossfading) {
+                        doCrossfade();
+                    }
+                }
+            });
+            audioObj.addEventListener('ended', () => {
+                if (audioObj === activeAudio && !isCrossfading) doCrossfade();
+            });
+            audioObj.addEventListener('playing', () => { audioErrorCount = 0; });
+        }
+
+        bindAudioEvents(audio1);
+        bindAudioEvents(audio2);
+
+        function handleAudioError() {
+            if(!isPlaying) return;
+            audioErrorCount++;
+            
+            if (audioErrorCount >= 3) {
+                hint.textContent = "связь потеряна. проверь интернет.";
+                hint.style.opacity = '0.8';
+                hint.style.filter = 'blur(0px)';
+                document.body.appendChild(hint);
+                isPlaying = false;
+                return;
+            }
+            
+            setTimeout(() => {
+                trackIndex = (trackIndex + 1) % playlist.length;
+                activeAudio.src = playlist[trackIndex];
+                activeAudio.play().catch(() => {});
+            }, 3000);
+        }
+        
+        audio1.addEventListener('error', handleAudioError);
+        audio2.addEventListener('error', handleAudioError);
+
+        function changeTextSmoothly(element, textArray, index) {
+            element.classList.remove('visible');
+            setTimeout(() => {
+                element.textContent = textArray[index];
+                element.classList.add('visible');
+            }, 6000);
+        }
+
+        function getPlural(num, word1, word2, word5) {
+            let n = Math.abs(num) % 100;
+            let n1 = n % 10;
+            if (n > 10 && n < 20) return word5;
+            if (n1 > 1 && n1 < 5) return word2;
+            if (n1 === 1) return word1;
+            return word5;
+        }
+
+        function updateTimerDisplay() {
+            sessionTimer.textContent = `сеанс: ${minutes} ${getPlural(minutes, 'минута', 'минуты', 'минут')}`;
+            if (totalMinutes > 0) {
+                totalTimer.textContent = `всего проведено здесь: ${totalMinutes} ${getPlural(totalMinutes, 'минута', 'минуты', 'минут')}`;
+            } else {
+                totalTimer.textContent = '';
+            }
+        }
+
+        function lockButton(btn) {
+            btn.style.pointerEvents = 'none';
+            setTimeout(() => btn.style.pointerEvents = 'auto', 600);
+        }
+        
+        const footer = document.querySelector('footer');
+
+        function hideInterface() {
+            if (isPlaying) {
+                document.body.style.cursor = 'none';
+                controls.classList.remove('visible');
+                footer.classList.remove('visible');
+                timerContainer.classList.remove('visible');
+            }
+        }
+
+        function showInterface() {
+            if (isPlaying) {
+                document.body.style.cursor = 'default';
+                controls.classList.add('visible');
+                footer.classList.add('visible');
+                timerContainer.classList.add('visible');
+                clearTimeout(cursorTimeout);
+                cursorTimeout = setTimeout(hideInterface, 4000);
+            }
+        }
+        
+        document.addEventListener('mousemove', showInterface);
+        document.addEventListener('touchstart', showInterface, {passive: true}); 
+        
+        muteBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            isGlobalMuted = !isGlobalMuted;
+            activeAudio.muted = isGlobalMuted;
+            nextAudio.muted = isGlobalMuted;
+            muteBtn.textContent = isGlobalMuted ? "тишина" : "звук";
+            volumeSlider.value = isGlobalMuted ? 0 : MAX_VOLUME;
+            localStorage.setItem('sanctuaryMuted', isGlobalMuted);
+        });
+
+        trackBtn.addEventListener('click', (e) => {
+            lockButton(trackBtn);
+            e.stopPropagation();
+            if (!isCrossfading && isPlaying) doCrossfade();
+        });
+
+        fsBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const docElm = document.documentElement;
+            
+            const isFullscreen = document.fullscreenElement || document.webkitFullscreenElement;
+
+            if (!isFullscreen) {
+                if (docElm.requestFullscreen) {
+                    docElm.requestFullscreen().catch(() => {});
+                } else if (docElm.webkitRequestFullscreen) {
+                    docElm.webkitRequestFullscreen();
+                }
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
+                }
+            }
+        });
+
+        themeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            lockButton(themeBtn);
+            document.body.classList.remove(themes[themeIndex]);
+            themeIndex = (themeIndex + 1) % themes.length;
+            document.body.classList.add(themes[themeIndex]);
+            localStorage.setItem('sanctuaryThemeIndex', themeIndex);
+        });
+
+        resetBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            lockButton(resetBtn);
+            if(confirm("забыть общее время пребывания здесь?")) {
+                localStorage.removeItem('sanctuaryTotalTime');
+                totalMinutes = 0;
+                updateTimerDisplay();
+            }
+        });
+
+        breatheBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            isBreathingMode = !isBreathingMode;
+            
+            if (isBreathingMode) {
+                breatheBtn.textContent = "мысли";
+                msgElement.classList.add('hidden-mode');
+                dreamElement.classList.add('hidden-mode');
+                breatheElement.classList.add('active-mode');
+                
+                clearInterval(msgInterval);
+                clearInterval(dreamInterval);
+                
+                let isBreatheIn = true;
+                breatheElement.textContent = "вдох";
+                document.title = "вдох...";
+                breatheElement.classList.add('inhale');
+                breatheElement.classList.remove('exhale');
+                
+                breatheInterval = setInterval(() => {
+                    isBreatheIn = !isBreatheIn;
+                    if (isBreatheIn) {
+                        breatheElement.textContent = "вдох";
+                        document.title = "вдох...";
+                        breatheElement.classList.add('inhale');
+                        breatheElement.classList.remove('exhale');
+                    } else {
+                        breatheElement.textContent = "выдох";
+                        document.title = "выдох...";
+                        breatheElement.classList.add('exhale');
+                        breatheElement.classList.remove('inhale');
+                    }
+                }, 8000);
+
+            } else {
+                breatheBtn.textContent = "дыхание";
+                document.title = "убежище";
+                msgElement.classList.remove('hidden-mode');
+                dreamElement.classList.remove('hidden-mode');
+                breatheElement.classList.remove('active-mode');
+                breatheElement.classList.remove('inhale', 'exhale');
+                
+                clearInterval(breatheInterval);
+                startTextTimers();
+            }
+        });
+
+        document.body.addEventListener('click', (e) => {
+            if (!e.target.closest('#controls') && !e.target.closest('footer')) {
+                const ripple = document.createElement('div');
+                ripple.className = 'ripple';
+                ripple.style.left = `${e.clientX - 10}px`;
+                ripple.style.top = `${e.clientY - 10}px`;
+                document.body.appendChild(ripple);
+                setTimeout(() => ripple.remove(), 2000);
+            }
+
+            if (!isPlaying) {
+                activeAudio.src = playlist[trackIndex];
+                activeAudio.volume = 0;
+                activeAudio.muted = isGlobalMuted;
+
+                activeAudio.play().then(() => {
+                    isPlaying = true;
+                    
+                    flashOverlay.style.opacity = '0.08';
+                    setTimeout(() => flashOverlay.style.opacity = '0', 200);
+
+                    if(hint) {
+                        hint.style.opacity = '0';
+                        hint.style.filter = 'blur(15px)';
+                        setTimeout(() => { if(hint.parentNode) hint.remove(); }, 5000);
+                    }
+                    
+                    orb.classList.add('active');
+                    aura.classList.add('active');
+                    updateTimerDisplay();
+                    showInterface();
+                    
+                    setTimeout(() => {
+                        msgElement.textContent = messages[0];
+                        msgElement.classList.add('visible');
+                    }, 3000);
+                    
+                    setTimeout(() => {
+                        dreamElement.textContent = dreamPrompts[0];
+                        dreamElement.classList.add('visible');
+                    }, 12000);
+                    
+                    let fadeIn = setInterval(() => {
+                        let nextVol = activeAudio.volume + 0.005;
+                        if (nextVol < MAX_VOLUME && nextVol <= 1) {
+                            activeAudio.volume = nextVol;
+                        } else {
+                            activeAudio.volume = Math.min(MAX_VOLUME, 1);
+                            clearInterval(fadeIn);
+                        }
+                    }, 50);
+                    
+                    if(!isBreathingMode) {
+                        startTextTimers();
+                    }
+                    
+                    setInterval(() => {
+                        minutes++;
+                        totalMinutes++;
+                        localStorage.setItem('sanctuaryTotalTime', totalMinutes);
+                        updateTimerDisplay();
+                    }, 60000);
+
+                }).catch((e) => {
+                    console.error("Audio playback failed", e);
+                });
+            }
+        });
+        
+        const canvas = document.getElementById('particles');
+        const ctx = canvas.getContext('2d');
+        let width, height;
+        let particles = [];
+        let mouseX = 0, mouseY = 0;
+        
+        function initParticles() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+            particles = [];
+            for (let i = 0; i < 120; i++) { 
+                particles.push({
+                    x: Math.random() * width,
+                    y: Math.random() * height,
+                    radius: Math.random() * 1.5 + 0.3,
+                    opacity: Math.random() * 0.4,
+                    speedY: Math.random() * 0.2 + 0.05,
+                    pulseSpeed: Math.random() * 0.005 + 0.002,
+                    pulseDir: Math.random() > 0.5 ? 1 : -1,
+                    angle: Math.random() * Math.PI * 2,
+                    swaySpeed: Math.random() * 0.01 + 0.002,
+                    swayAmount: Math.random() * 0.5 + 0.1,
+                    isStar: Math.random() > 0.8
+                });
+            }
+        }
+        
+        let lastWidth = window.innerWidth;
+        window.addEventListener('resize', () => {
+            if (window.innerWidth !== lastWidth) {
+                lastWidth = window.innerWidth;
+                initParticles();
+            }
+        });
+        
+        document.addEventListener('mousemove', (e) => {
+            if (!isPlaying) return;
+            mouseX = (e.clientX - width / 2) * 0.002;
+            mouseY = (e.clientY - height / 2) * 0.002;
+            
+            let shiftX = (e.clientX - width / 2) * 0.04;
+            let shiftY = (e.clientY - height / 2) * 0.04;
+            aura.style.marginLeft = shiftX + 'px';
+            aura.style.marginTop = shiftY + 'px';
+        });
+
+        document.addEventListener('touchmove', (e) => {
+            if (!isPlaying) return;
+            let touch = e.touches[0];
+            mouseX = (touch.clientX - width / 2) * 0.002;
+            mouseY = (touch.clientY - height / 2) * 0.002;
+            
+            let shiftX = (touch.clientX - width / 2) * 0.04;
+            let shiftY = (touch.clientY - height / 2) * 0.04;
+            aura.style.marginLeft = shiftX + 'px';
+            aura.style.marginTop = shiftY + 'px';
+        }, {passive: true});
+
+        function drawStar(ctx, cx, cy, outerRadius, innerRadius) {
+            let rot = Math.PI / 2 * 3;
+            let x = cx;
+            let y = cy;
+            let step = Math.PI / 4;
+
+            ctx.beginPath();
+            ctx.moveTo(cx, cy - outerRadius);
+            for (let i = 0; i < 4; i++) {
+                x = cx + Math.cos(rot) * outerRadius;
+                y = cy + Math.sin(rot) * outerRadius;
+                ctx.lineTo(x, y);
+                rot += step;
+
+                x = cx + Math.cos(rot) * innerRadius;
+                y = cy + Math.sin(rot) * innerRadius;
+                ctx.lineTo(x, y);
+                rot += step;
+            }
+            ctx.lineTo(cx, cy - outerRadius);
+            ctx.closePath();
+            ctx.fill();
+        }
+        
+        function animateParticles() {
+            ctx.clearRect(0, 0, width, height);
+            ctx.fillStyle = '#ffffff';
+            particles.forEach(p => {
+                p.y -= p.speedY;
+                p.angle += p.swaySpeed;
+                p.x += Math.sin(p.angle) * p.swayAmount;
+                if (p.y < -10) {
+                    p.y = height + 10;
+                    p.x = Math.random() * width;
+                }
+                
+                p.opacity += p.pulseSpeed * p.pulseDir;
+                if (p.opacity > 0.6) { p.opacity = 0.6; p.pulseDir = -1; }
+                if (p.opacity < 0.05) { p.opacity = 0.05; p.pulseDir = 1; }
+                
+                ctx.globalAlpha = p.opacity; 
+                
+                if (p.isStar) {
+                    drawStar(ctx, p.x - mouseX * p.radius, p.y - mouseY * p.radius, p.radius * 2.5, p.radius * 0.5);
+                } else {
+                    ctx.beginPath();
+                    ctx.arc(p.x - mouseX * p.radius, p.y - mouseY * p.radius, p.radius, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            });
+            requestAnimationFrame(animateParticles);
+        }
+        
+        initParticles();
+        animateParticles();
+
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js').catch(err => {
+                    console.log('SW Error: ', err);
+                });
+            });
+        }
+    </script>
+</body>
+</html>

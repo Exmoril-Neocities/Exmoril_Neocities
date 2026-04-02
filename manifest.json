@@ -1,0 +1,21 @@
+{
+  "name": "убежище",
+  "short_name": "убежище",
+  "description": "оставь тревоги за экраном. мы никуда не торопимся.",
+  "start_url": "/index.html",
+  "display": "fullscreen",
+  "background_color": "#050507",
+  "theme_color": "#050507",
+  "icons": [
+    {
+      "src": "favicon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "favicon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
