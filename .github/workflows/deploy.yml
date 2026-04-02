@@ -1,0 +1,33 @@
+name: Deploy to Neocities
+
+# Скрипт будет запускаться при каждом сохранении (push) в главную ветку
+on:
+  push:
+    branches:
+      - main # Если ваша главная ветка называется master, замените main на master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Prepare files for deployment
+      run: |
+        # Создаем временную папку для отправки на Neocities
+        mkdir public
+        # Копируем в нее все файлы проекта
+        cp -r * public/ || true
+        # Удаляем тяжелые .mp3 файлы из папки для отправки, чтобы не забивать память Neocities
+        rm -rf public/*.mp3
+        # Удаляем служебную папку GitHub
+        rm -rf public/.github
+
+    - name: Deploy to Neocities
+      uses: bcomnes/deploy-to-neocities@v3
+      with:
+        api_token: ${{ secrets.NEOCITIES_API_TOKEN }}
+        cleanup: false # Не удаляем файлы на Neocities, которых нет на GitHub
+        dist_dir: public # Отправляем только подготовленную папку
