@@ -216,6 +216,9 @@
             transition: opacity 0.5s, width 0.5s;
             cursor: pointer;
             accent-color: #a0a0b0;
+            margin: 0;
+            padding: 0;
+            vertical-align: middle;
         }
 
         .volume-container:hover #volumeSlider {
@@ -465,6 +468,8 @@
         .control-btn {
             cursor: pointer;
             transition: color 0.5s ease-in-out, text-shadow 0.5s ease-in-out;
+            line-height: 1;
+            display: inline-flex;
         }
 
         .control-btn:hover {
@@ -530,6 +535,28 @@
                 gap: 15px;
             }
         }
+
+        .audio-waves-container {
+            position: absolute;
+            top: 40%;
+            left: 50%;
+            width: 140px;
+            height: 140px;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .wave-ring {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            opacity: 0;
+            transform: scale(1);
+            will-change: transform, opacity;
+            transition: transform 0.1s linear, opacity 0.1s linear; 
+        }
     </style>
 </head>
 <body class="theme-space">
@@ -544,6 +571,12 @@
     
     <div class="container">
         <div class="aura"></div>
+
+        <div class="audio-waves-container">
+            <div class="wave-ring wave-1"></div>
+            <div class="wave-ring wave-2"></div>
+            <div class="wave-ring wave-3"></div>
+        </div>
         <div class="orb"></div>
         
         <div class="text-container">
@@ -914,10 +947,68 @@
         
         const audio1 = new Audio();
         const audio2 = new Audio();
+
+        audio1.crossOrigin = "anonymous";
+        audio2.crossOrigin = "anonymous";
+
         let activeAudio = audio1;
         let nextAudio = audio2;
         
         let trackIndex = Math.floor(Math.random() * playlist.length);
+
+        let audioCtx, analyser, dataArray;
+        const wave1 = document.querySelector('.wave-1');
+        const wave2 = document.querySelector('.wave-2');
+        const wave3 = document.querySelector('.wave-3');
+
+        function initAudioVisualizer() {
+            if (audioCtx) return;
+            const AudioContext = window.AudioContext || window.webkitAudioContext;
+            audioCtx = new AudioContext();
+            analyser = audioCtx.createAnalyser();
+            analyser.fftSize = 128;
+            dataArray = new Uint8Array(analyser.frequencyBinCount);
+
+            const source1 = audioCtx.createMediaElementSource(audio1);
+            const source2 = audioCtx.createMediaElementSource(audio2);
+
+            source1.connect(analyser);
+            source2.connect(analyser);
+            analyser.connect(audioCtx.destination);
+            
+            visualizeAudio();
+        }
+
+        function visualizeAudio() {
+            if (!isPlaying) return;
+            requestAnimationFrame(visualizeAudio);
+            analyser.getByteFrequencyData(dataArray);
+
+            let lowerHalf = 0;
+            let upperHalf = 0;
+            const halfLength = Math.floor(dataArray.length / 2);
+
+            for (let i = 0; i < dataArray.length; i++) {
+                if (i < halfLength) lowerHalf += dataArray[i];
+                else upperHalf += dataArray[i];
+            }
+            
+            const avgLow = lowerHalf / halfLength;
+            const avgHigh = upperHalf / halfLength;
+            
+            const scale1 = 1 + (avgLow / 255) * 0.6; 
+            const scale2 = 1 + (avgLow / 255) * 1.2;
+            const scale3 = 1 + (avgHigh / 255) * 1.8;
+
+            const op1 = (avgLow / 255) * 0.7;
+            const op2 = (avgLow / 255) * 0.4;
+            const op3 = (avgHigh / 255) * 0.2;
+
+            if (wave1) { wave1.style.transform = `scale(${scale1})`; wave1.style.opacity = op1; }
+            if (wave2) { wave2.style.transform = `scale(${scale2})`; wave2.style.opacity = op2; }
+            if (wave3) { wave3.style.transform = `scale(${scale3})`; wave3.style.opacity = op3; }
+        }
+
         let isPlaying = false;
         let isCrossfading = false;
         
@@ -1240,6 +1331,11 @@
             }
 
             if (!isPlaying) {
+                initAudioVisualizer();
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+
                 activeAudio.src = playlist[trackIndex];
                 activeAudio.volume = 0;
                 activeAudio.muted = isGlobalMuted;
