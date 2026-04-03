@@ -440,7 +440,10 @@
         #controls {
             position: absolute;
             bottom: 35px;
-            right: 45px;
+            left: 0;
+            width: 100%;
+            padding: 0 45px;
+            box-sizing: border-box;
             font-size: 13px;
             color: #7a7a85;
             z-index: 20;
@@ -449,11 +452,15 @@
             transition: opacity 3s ease-in-out;
             pointer-events: none;
             display: flex;
-            gap: 25px;
-            flex-wrap: wrap;
-            justify-content: flex-end;
+            justify-content: space-between;
             align-items: center;
-            max-width: 60%;
+        }
+
+        .controls-group {
+            display: flex;
+            gap: 25px;
+            align-items: center;
+            flex-wrap: wrap;
         }
 
         #controls.visible {
@@ -475,6 +482,22 @@
         .control-btn:hover {
             color: #ffffff;
             text-shadow: 0 0 10px rgba(255,255,255,0.3);
+        }
+
+        @media (max-width: 800px) {
+            #controls {
+                flex-direction: column;
+                gap: 20px;
+                padding: 0 15px;
+                bottom: 25px;
+            }
+            .controls-group {
+                justify-content: center;
+                gap: 15px;
+            }
+            #volume-panel { right: 12%; }
+            #mixer-panel { right: 7%; }
+            #sleep-panel { right: 2%; flex-direction: row; gap: 20px;}
         }
 
         noscript {
@@ -653,18 +676,27 @@
     </div>
 
     <div id="controls">
-        <span class="control-btn" id="breatheBtn">дыхание</span>
-        <span class="control-btn" id="letgoBtn">отпустить</span>
-        <span class="control-btn" id="mixerBtn">шумы</span>
-        <span class="control-btn" id="themeBtn">тема</span>
-        <span class="control-btn" id="trackBtn">след. трек</span>
-        <div class="volume-container">
-            <span class="control-btn" id="muteBtn">звук</span>
+        <div class="controls-group controls-left">
+            <span class="control-btn" id="breatheBtn">дыхание</span>
+            <span class="control-btn" id="letgoBtn">отпустить</span>
+            <span class="control-btn" id="fsBtn">экран</span>
+            <span class="control-btn" id="resetBtn">сброс</span>
+        </div>
+        
+        <div class="controls-group controls-right">
+            <span class="control-btn" id="themeBtn">тема</span>
+            <span class="control-btn" id="trackBtn">след. трек</span>
+            <span class="control-btn" id="mixerBtn">шумы</span>
+            <span class="control-btn" id="volumeBtn">звук</span>
+            <span class="control-btn" id="timerBtn">сон</span>
+        </div>
+    </div>
+
+    <div id="volume-panel" class="hidden-panel">
+        <div class="mixer-item">
+            <span>музыка</span>
             <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="0.35" aria-label="уровень громкости">
         </div>
-        <span class="control-btn" id="timerBtn">сон</span>
-        <span class="control-btn" id="fsBtn">экран</span>
-        <span class="control-btn" id="resetBtn">сброс</span>
     </div>
 
     <div id="mixer-panel" class="hidden-panel">
@@ -1025,8 +1057,7 @@
         const totalTimer = document.getElementById('totalTimer');
         const flashOverlay = document.getElementById('flash-overlay');
         const controls = document.getElementById('controls');
-        
-        const muteBtn = document.getElementById('muteBtn');
+        const volumeBtn = document.getElementById('volumeBtn');
         
         const fsBtn = document.getElementById('fsBtn');
         if (!document.fullscreenEnabled && !document.webkitFullscreenEnabled) {
@@ -1106,29 +1137,13 @@
         let isCrossfading = false;
         
         let isGlobalMuted = localStorage.getItem('sanctuaryMuted') === 'true';
-        muteBtn.textContent = isGlobalMuted ? "тишина" : "звук";
+        volumeBtn.textContent = isGlobalMuted ? "тишина" : "звук";
         
         const CROSSFADE_TIME = 4;
         let savedVolume = localStorage.getItem('sanctuaryVolume');
         let MAX_VOLUME = savedVolume !== null ? parseFloat(savedVolume) : 0.35;
         const volumeSlider = document.getElementById('volumeSlider');
         volumeSlider.value = isGlobalMuted ? 0 : MAX_VOLUME;
-
-        volumeSlider.addEventListener('input', (e) => {
-            e.stopPropagation();
-            MAX_VOLUME = parseFloat(e.target.value);
-            localStorage.setItem('sanctuaryVolume', MAX_VOLUME);
-            
-            if (MAX_VOLUME === 0) {
-                isGlobalMuted = true;
-                muteBtn.textContent = "тишина";
-            } else {
-                isGlobalMuted = false;
-                muteBtn.textContent = "звук";
-            }
-            localStorage.setItem('sanctuaryMuted', isGlobalMuted);
-            if (activeAudio) activeAudio.volume = MAX_VOLUME;
-        });
 
         let msgIndex = 0;
         let dreamIndex = 0;
@@ -1309,16 +1324,6 @@
         
         document.addEventListener('mousemove', showInterface);
         document.addEventListener('touchstart', showInterface, {passive: true});
-        
-        muteBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            isGlobalMuted = !isGlobalMuted;
-            activeAudio.muted = isGlobalMuted;
-            nextAudio.muted = isGlobalMuted;
-            muteBtn.textContent = isGlobalMuted ? "тишина" : "звук";
-            volumeSlider.value = isGlobalMuted ? 0 : MAX_VOLUME;
-            localStorage.setItem('sanctuaryMuted', isGlobalMuted);
-        });
 
         trackBtn.addEventListener('click', (e) => {
             lockButton(trackBtn);
@@ -1414,7 +1419,7 @@
         });
 
         document.body.addEventListener('click', (e) => {
-            if (!e.target.closest('#controls') && !e.target.closest('footer')) {
+            if (!e.target.closest('#controls') && !e.target.closest('footer') && !e.target.closest('.hidden-panel')) {
                 const ripple = document.createElement('div');
                 ripple.className = 'ripple';
                 ripple.style.left = `${e.clientX - 10}px`;
@@ -1685,13 +1690,21 @@
 
         if ('mediaSession' in navigator) {
             navigator.mediaSession.metadata = new MediaMetadata({
-                title: 'Убежище',
-                artist: 'Отдых от шума',
+                title: 'убежище',
+                artist: 'отдых от шума',
                 artwork: [{ src: '/favicon.png', sizes: '192x192', type: 'image/png' }]
             });
             navigator.mediaSession.setActionHandler('nexttrack', () => trackBtn.click());
-            navigator.mediaSession.setActionHandler('pause', () => muteBtn.click());
-            navigator.mediaSession.setActionHandler('play', () => muteBtn.click());
+            navigator.mediaSession.setActionHandler('pause', () => {
+                isGlobalMuted = true;
+                activeAudio.muted = true;
+                volumeBtn.textContent = "тишина";
+            });
+            navigator.mediaSession.setActionHandler('play', () => {
+                isGlobalMuted = false;
+                activeAudio.muted = false;
+                volumeBtn.textContent = "звук";
+            });
         }
 
         let wakeLock = null;
@@ -1707,6 +1720,12 @@
 
         const mixerBtn = document.getElementById('mixerBtn');
         const mixerPanel = document.getElementById('mixer-panel');
+        const timerBtn = document.getElementById('timerBtn');
+        const sleepPanel = document.getElementById('sleep-panel');
+        const volumePanel = document.getElementById('volume-panel');
+        const sleepBlackout = document.getElementById('sleep-blackout');
+        let sleepTimeout, sleepFadeInterval;
+
         const bgRain = new Audio('https://cdn.jsdelivr.net/gh/Exmoril-Neocities/Exmoril_Neocities@main/rain.mp3');
         const bgFire = new Audio('https://cdn.jsdelivr.net/gh/Exmoril-Neocities/Exmoril_Neocities@main/fire.mp3');
         const bgForest = new Audio('https://cdn.jsdelivr.net/gh/Exmoril-Neocities/Exmoril_Neocities@main/crickets.mp3');
@@ -1715,23 +1734,43 @@
         mixerBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             mixerPanel.classList.toggle('show');
-            document.getElementById('sleep-panel').classList.remove('show');
+            sleepPanel.classList.remove('show');
+            volumePanel.classList.remove('show');
             if (bgRain.paused && isPlaying) { bgRain.play(); bgFire.play(); bgForest.play(); }
+        });
+
+        volumeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            volumePanel.classList.toggle('show');
+            mixerPanel.classList.remove('show');
+            sleepPanel.classList.remove('show');
+        });
+
+        timerBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            sleepPanel.classList.toggle('show');
+            mixerPanel.classList.remove('show');
+            volumePanel.classList.remove('show');
         });
 
         document.getElementById('rainVol').addEventListener('input', e => bgRain.volume = e.target.value);
         document.getElementById('fireVol').addEventListener('input', e => bgFire.volume = e.target.value);
         document.getElementById('forestVol').addEventListener('input', e => bgForest.volume = e.target.value);
 
-        const timerBtn = document.getElementById('timerBtn');
-        const sleepPanel = document.getElementById('sleep-panel');
-        const sleepBlackout = document.getElementById('sleep-blackout');
-        let sleepTimeout, sleepFadeInterval;
-
-        timerBtn.addEventListener('click', (e) => {
+        volumeSlider.addEventListener('input', (e) => {
             e.stopPropagation();
-            sleepPanel.classList.toggle('show');
-            mixerPanel.classList.remove('show');
+            MAX_VOLUME = parseFloat(e.target.value);
+            localStorage.setItem('sanctuaryVolume', MAX_VOLUME);
+            
+            if (MAX_VOLUME === 0) {
+                isGlobalMuted = true;
+                volumeBtn.textContent = "тишина";
+            } else {
+                isGlobalMuted = false;
+                volumeBtn.textContent = "звук";
+            }
+            localStorage.setItem('sanctuaryMuted', isGlobalMuted);
+            if (activeAudio) activeAudio.volume = MAX_VOLUME;
         });
 
         document.querySelectorAll('.sleep-option').forEach(opt => {
@@ -1812,9 +1851,12 @@
             }
         });
 
-        document.body.addEventListener('click', () => {
-            mixerPanel.classList.remove('show');
-            sleepPanel.classList.remove('show');
+        document.body.addEventListener('click', (e) => {
+            if(!e.target.closest('.hidden-panel') && e.target.id !== 'mixerBtn' && e.target.id !== 'volumeBtn' && e.target.id !== 'timerBtn') {
+                mixerPanel.classList.remove('show');
+                sleepPanel.classList.remove('show');
+                volumePanel.classList.remove('show');
+            }
             if (thoughtInput.value.trim() === '') thoughtOverlay.classList.remove('show');
         });
     </script>
