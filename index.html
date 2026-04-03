@@ -513,10 +513,28 @@
             color: #ffffff;
             text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
         }
+
+        .text-line, .orb, .aura, #breatheText {
+            will-change: transform, opacity, filter;
+        }
+
+        @media (max-width: 600px) {
+            #controls {
+                justify-content: center;
+                right: 0;
+                left: 0;
+                margin: 0 auto;
+                bottom: 25px;
+                max-width: 95%;
+                gap: 15px;
+            }
+        }
     </style>
 </head>
 <body class="theme-space">
     <noscript>для погружения необходимо включить javascript.</noscript>
+
+    <h1 style="position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0, 0, 0, 0); border: 0;">убежище от шума</h1>
     
     <div id="flash-overlay"></div>
     <canvas id="particles"></canvas>
@@ -545,7 +563,7 @@
         <span class="control-btn" id="trackBtn">след. трек</span>
         <div class="volume-container">
             <span class="control-btn" id="muteBtn">звук</span>
-            <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="0.35">
+            <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="0.35" aria-label="уровень громкости">
         </div>
         <span class="control-btn" id="fsBtn">экран</span>
         <span class="control-btn" id="resetBtn">сброс</span>
@@ -882,7 +900,12 @@
         const controls = document.getElementById('controls');
         
         const muteBtn = document.getElementById('muteBtn');
+        
         const fsBtn = document.getElementById('fsBtn');
+        if (!document.fullscreenEnabled && !document.webkitFullscreenEnabled) {
+            fsBtn.style.display = 'none';
+        }
+
         const themeBtn = document.getElementById('themeBtn');
         const resetBtn = document.getElementById('resetBtn');
         const trackBtn = document.getElementById('trackBtn');
@@ -1082,19 +1105,25 @@
             }
         }
 
-        function showInterface() {
-            if (isPlaying) {
-                document.body.style.cursor = 'default';
-                controls.classList.add('visible');
-                footer.classList.add('visible');
-                timerContainer.classList.add('visible');
-                clearTimeout(cursorTimeout);
-                cursorTimeout = setTimeout(hideInterface, 4000);
-            }
+        let lastMoveTime = 0;
+
+        function showInterface(e) {
+            if (!isPlaying) return;
+
+            const now = Date.now();
+            if (now - lastMoveTime < 100) return;
+            lastMoveTime = now;
+
+            document.body.style.cursor = 'default';
+            controls.classList.add('visible');
+            footer.classList.add('visible');
+            timerContainer.classList.add('visible');
+            clearTimeout(cursorTimeout);
+            cursorTimeout = setTimeout(hideInterface, 4000);
         }
         
         document.addEventListener('mousemove', showInterface);
-        document.addEventListener('touchstart', showInterface, {passive: true}); 
+        document.addEventListener('touchstart', showInterface, {passive: true});
         
         muteBtn.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -1299,7 +1328,8 @@
         window.addEventListener('resize', () => {
             if (window.innerWidth !== lastWidth) {
                 lastWidth = window.innerWidth;
-                initParticles();
+                width = canvas.width = window.innerWidth;
+                height = canvas.height = window.innerHeight;
             }
         });
         
