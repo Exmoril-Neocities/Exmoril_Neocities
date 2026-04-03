@@ -557,6 +557,67 @@
             will-change: transform, opacity;
             transition: transform 0.1s linear, opacity 0.1s linear; 
         }
+
+        .hidden-panel {
+            position: absolute;
+            bottom: 70px;
+            background: rgba(10, 10, 15, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            z-index: 25;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s;
+            backdrop-filter: blur(10px);
+        }
+        .hidden-panel.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        #mixer-panel { right: 15%; }
+        #sleep-panel { right: 5%; flex-direction: row; gap: 20px;}
+        
+        .mixer-item { display: flex; align-items: center; gap: 15px; font-size: 12px; color: #a0a0b0; }
+        .mixer-item input { width: 80px; accent-color: #a0a0b0; cursor: pointer; }
+        
+        .sleep-option { cursor: pointer; transition: color 0.3s; font-size: 13px; }
+        .sleep-option:hover { color: #fff; }
+        .sleep-option.active { color: #fff; text-shadow: 0 0 8px rgba(255,255,255,0.5); }
+
+        #thought-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); z-index: 100;
+            display: flex; justify-content: center; align-items: center;
+            opacity: 0; pointer-events: none; transition: opacity 0.5s;
+        }
+        #thought-overlay.show { opacity: 1; pointer-events: auto; }
+        #thoughtInput {
+            background: transparent; border: none; border-bottom: 1px solid #5c5c66;
+            color: #fff; font-family: 'Courier New', Courier, monospace; font-size: 18px;
+            text-align: center; width: 60%; max-width: 500px; padding: 10px; outline: none;
+            letter-spacing: 2px;
+        }
+        
+        #thought-display {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            font-size: 24px; color: #fff; text-shadow: 0 0 20px rgba(255,255,255,0.5);
+            z-index: 90; opacity: 0; pointer-events: none; letter-spacing: 4px; text-align: center;
+        }
+        @keyframes shatterThought {
+            0% { opacity: 1; filter: blur(0); transform: translate(-50%, -50%) scale(1); }
+            50% { opacity: 0.8; filter: blur(5px); transform: translate(-50%, -50%) scale(1.1); }
+            100% { opacity: 0; filter: blur(15px); transform: translate(-50%, -50%) scale(1.5); }
+        }
+
+        #sleep-blackout {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; z-index: 999; opacity: 0; pointer-events: none;
+            transition: opacity 60s linear; /* Плавное затухание в конце таймера */
+        }
     </style>
 </head>
 <body class="theme-space">
@@ -593,15 +654,47 @@
 
     <div id="controls">
         <span class="control-btn" id="breatheBtn">дыхание</span>
+        <span class="control-btn" id="letgoBtn">отпустить</span>
+        <span class="control-btn" id="mixerBtn">шумы</span>
         <span class="control-btn" id="themeBtn">тема</span>
         <span class="control-btn" id="trackBtn">след. трек</span>
         <div class="volume-container">
             <span class="control-btn" id="muteBtn">звук</span>
             <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="0.35" aria-label="уровень громкости">
         </div>
+        <span class="control-btn" id="timerBtn">сон</span>
         <span class="control-btn" id="fsBtn">экран</span>
         <span class="control-btn" id="resetBtn">сброс</span>
     </div>
+
+    <div id="mixer-panel" class="hidden-panel">
+        <div class="mixer-item">
+            <span>дождь</span>
+            <input type="range" id="rainVol" min="0" max="1" step="0.01" value="0">
+        </div>
+        <div class="mixer-item">
+            <span>костер</span>
+            <input type="range" id="fireVol" min="0" max="1" step="0.01" value="0">
+        </div>
+        <div class="mixer-item">
+            <span>лес</span>
+            <input type="range" id="forestVol" min="0" max="1" step="0.01" value="0">
+        </div>
+    </div>
+
+    <div id="sleep-panel" class="hidden-panel">
+        <span class="sleep-option" data-time="15">15 мин</span>
+        <span class="sleep-option" data-time="30">30 мин</span>
+        <span class="sleep-option" data-time="60">60 мин</span>
+        <span class="sleep-option" data-time="0" style="color:#a0a0b0;">откл</span>
+    </div>
+
+    <div id="thought-overlay" class="hidden-overlay">
+        <input type="text" id="thoughtInput" placeholder="напиши свою тревогу и нажми enter..." autocomplete="off">
+    </div>
+    
+    <div id="thought-display"></div>
+    <div id="sleep-blackout"></div>
     
     <footer>
       <p>© 2025–2026 Exmoril. Все права защищены. <a href="LICENSE.txt" target="_blank">Авторские права и Условия использования.</a> </p>
@@ -1476,11 +1569,26 @@
                 let p = particles[i];
                 
                 if (p.type === 'normal') {
-                    p.y -= p.speedY;
+                    let currentTheme = document.body.className;
+                    
+                    if (currentTheme === 'theme-void') {
+                        p.y += p.speedY * 1.2;
+                    } else if (currentTheme === 'theme-ocean') {
+                        p.y -= p.speedY * 1.5;
+                        p.x += Math.sin(p.angle) * p.swayAmount * 2.5;
+                    } else if (currentTheme === 'theme-forest') {
+                        p.y -= p.speedY * 0.4;
+                    } else {
+                        p.y -= p.speedY;
+                    }
+                    
                     p.angle += p.swaySpeed;
                     p.x += Math.sin(p.angle) * p.swayAmount;
                     
-                    if (p.y < -10) {
+                    if (currentTheme === 'theme-void' && p.y > height + 10) {
+                        p.y = -10;
+                        p.x = Math.random() * width;
+                    } else if (currentTheme !== 'theme-void' && p.y < -10) {
                         p.y = height + 10;
                         p.x = Math.random() * width;
                     }
@@ -1574,6 +1682,141 @@
                 });
             });
         }
+
+        if ('mediaSession' in navigator) {
+            navigator.mediaSession.metadata = new MediaMetadata({
+                title: 'Убежище',
+                artist: 'Отдых от шума',
+                artwork: [{ src: '/favicon.png', sizes: '192x192', type: 'image/png' }]
+            });
+            navigator.mediaSession.setActionHandler('nexttrack', () => trackBtn.click());
+            navigator.mediaSession.setActionHandler('pause', () => muteBtn.click());
+            navigator.mediaSession.setActionHandler('play', () => muteBtn.click());
+        }
+
+        let wakeLock = null;
+        async function toggleWakeLock(enable) {
+            if ('wakeLock' in navigator) {
+                try {
+                    if (enable) wakeLock = await navigator.wakeLock.request('screen');
+                    else if (wakeLock) { await wakeLock.release(); wakeLock = null; }
+                } catch (err) { console.log('Wake Lock error:', err); }
+            }
+        }
+        breatheBtn.addEventListener('click', () => toggleWakeLock(isBreathingMode));
+
+        const mixerBtn = document.getElementById('mixerBtn');
+        const mixerPanel = document.getElementById('mixer-panel');
+        const bgRain = new Audio('https://cdn.jsdelivr.net/gh/Exmoril-Neocities/Exmoril_Neocities@main/rain.mp3');
+        const bgFire = new Audio('https://cdn.jsdelivr.net/gh/Exmoril-Neocities/Exmoril_Neocities@main/fire.mp3');
+        const bgForest = new Audio('https://cdn.jsdelivr.net/gh/Exmoril-Neocities/Exmoril_Neocities@main/crickets.mp3');
+        [bgRain, bgFire, bgForest].forEach(a => { a.loop = true; a.volume = 0; a.crossOrigin = "anonymous"; });
+
+        mixerBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            mixerPanel.classList.toggle('show');
+            document.getElementById('sleep-panel').classList.remove('show');
+            if (bgRain.paused && isPlaying) { bgRain.play(); bgFire.play(); bgForest.play(); }
+        });
+
+        document.getElementById('rainVol').addEventListener('input', e => bgRain.volume = e.target.value);
+        document.getElementById('fireVol').addEventListener('input', e => bgFire.volume = e.target.value);
+        document.getElementById('forestVol').addEventListener('input', e => bgForest.volume = e.target.value);
+
+        const timerBtn = document.getElementById('timerBtn');
+        const sleepPanel = document.getElementById('sleep-panel');
+        const sleepBlackout = document.getElementById('sleep-blackout');
+        let sleepTimeout, sleepFadeInterval;
+
+        timerBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            sleepPanel.classList.toggle('show');
+            mixerPanel.classList.remove('show');
+        });
+
+        document.querySelectorAll('.sleep-option').forEach(opt => {
+            opt.addEventListener('click', (e) => {
+                e.stopPropagation();
+                document.querySelectorAll('.sleep-option').forEach(o => o.classList.remove('active'));
+                opt.classList.add('active');
+                
+                clearTimeout(sleepTimeout);
+                clearInterval(sleepFadeInterval);
+                sleepBlackout.style.opacity = '0';
+                
+                let mins = parseInt(opt.getAttribute('data-time'));
+                if (mins > 0) {
+                    timerBtn.textContent = `сон (${mins}м)`;
+                    sleepTimeout = setTimeout(() => {
+                        sleepBlackout.style.opacity = '1';
+                        let currentVol = MAX_VOLUME;
+                        sleepFadeInterval = setInterval(() => {
+                            if (currentVol > 0.02) {
+                                currentVol -= 0.02;
+                                activeAudio.volume = currentVol;
+                                bgRain.volume = bgRain.volume * 0.9;
+                                bgFire.volume = bgFire.volume * 0.9;
+                                bgForest.volume = bgForest.volume * 0.9;
+                            } else {
+                                isGlobalMuted = true;
+                                activeAudio.muted = true;
+                                clearInterval(sleepFadeInterval);
+                            }
+                        }, 1200);
+                    }, (mins - 1) * 60000);
+                } else {
+                    timerBtn.textContent = 'сон';
+                    activeAudio.volume = MAX_VOLUME;
+                }
+                setTimeout(() => sleepPanel.classList.remove('show'), 500);
+            });
+        });
+
+        const letgoBtn = document.getElementById('letgoBtn');
+        const thoughtOverlay = document.getElementById('thought-overlay');
+        const thoughtInput = document.getElementById('thoughtInput');
+        const thoughtDisplay = document.getElementById('thought-display');
+
+        letgoBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            thoughtOverlay.classList.add('show');
+            thoughtInput.value = '';
+            setTimeout(() => thoughtInput.focus(), 100);
+        });
+
+        thoughtInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && thoughtInput.value.trim() !== '') {
+                thoughtOverlay.classList.remove('show');
+                
+                thoughtDisplay.textContent = thoughtInput.value;
+                thoughtDisplay.style.animation = 'none';
+                void thoughtDisplay.offsetWidth;
+                thoughtDisplay.style.animation = 'shatterThought 5s ease-out forwards';
+                
+                for (let i = 0; i < 40; i++) {
+                    particles.push({
+                        type: 'normal',
+                        x: width / 2,
+                        y: height / 2,
+                        radius: Math.random() * 2 + 1,
+                        opacity: 1,
+                        speedY: (Math.random() - 0.5) * 5,
+                        pulseSpeed: 0.02,
+                        pulseDir: -1,
+                        angle: Math.random() * Math.PI * 2,
+                        swaySpeed: (Math.random() - 0.5) * 0.1,
+                        swayAmount: Math.random() * 5 + 2,
+                        isStar: true
+                    });
+                }
+            }
+        });
+
+        document.body.addEventListener('click', () => {
+            mixerPanel.classList.remove('show');
+            sleepPanel.classList.remove('show');
+            if (thoughtInput.value.trim() === '') thoughtOverlay.classList.remove('show');
+        });
     </script>
 </body>
 </html>
