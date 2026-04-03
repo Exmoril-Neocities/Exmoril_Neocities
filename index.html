@@ -204,39 +204,6 @@
             opacity: 0.35;
         }
 
-        .volume-container {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        #volumeSlider {
-            width: 0px;
-            opacity: 0;
-            transition: opacity 0.5s, width 0.5s;
-            cursor: pointer;
-            accent-color: #a0a0b0;
-            margin: 0;
-            padding: 0;
-            vertical-align: middle;
-        }
-
-        .volume-container:hover #volumeSlider {
-            width: 70px;
-            opacity: 0.7;
-        }
-
-        #volumeSlider:hover {
-            opacity: 1;
-        }
-
-        @media (hover: none) {
-            #volumeSlider {
-                width: 70px;
-                opacity: 0.7;
-            }
-        }
-
         .ripple {
             position: absolute;
             width: 20px;
@@ -601,8 +568,10 @@
             opacity: 1;
             pointer-events: auto;
         }
+        
         #mixer-panel { right: 15%; }
-        #sleep-panel { right: 5%; flex-direction: row; gap: 20px;}
+        #volume-panel { right: 9%; }
+        #sleep-panel { right: 2%; flex-direction: row; gap: 20px;}
         
         .mixer-item { display: flex; align-items: center; gap: 15px; font-size: 12px; color: #a0a0b0; }
         .mixer-item input { width: 80px; accent-color: #a0a0b0; cursor: pointer; }
@@ -1729,7 +1698,7 @@
         const bgRain = new Audio('https://cdn.jsdelivr.net/gh/Exmoril-Neocities/Exmoril_Neocities@main/rain.mp3');
         const bgFire = new Audio('https://cdn.jsdelivr.net/gh/Exmoril-Neocities/Exmoril_Neocities@main/fire.mp3');
         const bgForest = new Audio('https://cdn.jsdelivr.net/gh/Exmoril-Neocities/Exmoril_Neocities@main/crickets.mp3');
-        [bgRain, bgFire, bgForest].forEach(a => { a.loop = true; a.volume = 0; a.crossOrigin = "anonymous"; });
+        [bgRain, bgFire, bgForest].forEach(a => { a.loop = true; a.volume = 0; a.muted = isGlobalMuted; a.crossOrigin = "anonymous"; });
 
         mixerBtn.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -1765,9 +1734,15 @@
             if (MAX_VOLUME === 0) {
                 isGlobalMuted = true;
                 volumeBtn.textContent = "тишина";
+                bgRain.muted = true;
+                bgFire.muted = true;
+                bgForest.muted = true;
             } else {
                 isGlobalMuted = false;
                 volumeBtn.textContent = "звук";
+                bgRain.muted = false;
+                bgFire.muted = false;
+                bgForest.muted = false;
             }
             localStorage.setItem('sanctuaryMuted', isGlobalMuted);
             if (activeAudio) activeAudio.volume = MAX_VOLUME;
