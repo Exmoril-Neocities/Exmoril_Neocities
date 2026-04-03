@@ -1047,8 +1047,20 @@
 
         let activeAudio = audio1;
         let nextAudio = audio2;
+        let shuffledQueue = [];
         
-        let trackIndex = Math.floor(Math.random() * playlist.length);
+        function getNextRandomTrack() {
+            if (shuffledQueue.length === 0) {
+                for (let i = 0; i < playlist.length; i++) shuffledQueue.push(i);
+                for (let i = shuffledQueue.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [shuffledQueue[i], shuffledQueue[j]] = [shuffledQueue[j], shuffledQueue[i]];
+                }
+            }
+            return shuffledQueue.shift();
+        }
+
+        let trackIndex = getNextRandomTrack();
 
         let audioCtx, analyser, dataArray;
         const wave1 = document.querySelector('.wave-1');
@@ -1147,7 +1159,7 @@
             if (isCrossfading) return;
             isCrossfading = true;
 
-            trackIndex = (trackIndex + 1) % playlist.length;
+            trackIndex = getNextRandomTrack();
             nextAudio.src = playlist[trackIndex];
             nextAudio.volume = 0;
             nextAudio.muted = isGlobalMuted;
@@ -1224,7 +1236,7 @@
             }
             
             setTimeout(() => {
-                trackIndex = (trackIndex + 1) % playlist.length;
+                trackIndex = getNextRandomTrack();
                 activeAudio.src = playlist[trackIndex];
                 activeAudio.play().catch(() => {});
             }, 3000);
