@@ -462,9 +462,10 @@
                 justify-content: center;
                 gap: 15px;
             }
-            #volume-panel { right: 12%; }
-            #mixer-panel { right: 7%; }
-            #sleep-panel { right: 2%; flex-direction: row; gap: 20px;}
+            #volume-panel, #mixer-panel, #sleep-panel { 
+                right: 50%; 
+                transform: translateX(50%); 
+            }
         }
 
         noscript {
@@ -569,9 +570,9 @@
             pointer-events: auto;
         }
         
-        #mixer-panel { right: 15%; }
-        #volume-panel { right: 9%; }
-        #sleep-panel { right: 2%; flex-direction: row; gap: 20px;}
+        #mixer-panel { right: 170px; }
+        #volume-panel { right: 110px; }
+        #sleep-panel { right: 45px; flex-direction: row; gap: 20px; }
         
         .mixer-item { display: flex; align-items: center; gap: 15px; font-size: 12px; color: #a0a0b0; }
         .mixer-item input { width: 80px; accent-color: #a0a0b0; cursor: pointer; }
