@@ -1263,10 +1263,19 @@
         document.body.className = themes[themeIndex];
         
         let isBreathingMode = false;
-        let minutes = 0;
-        let totalMinutes = parseInt(localStorage.getItem('shelterTotalTime')) || 0;
+        
+        let oldTotalMinutes = localStorage.getItem('shelterTotalTime');
+        if (oldTotalMinutes !== null) {
+            let fixedSeconds = Math.max(0, parseInt(oldTotalMinutes) * 60);
+            localStorage.setItem('shelterTotalSeconds', fixedSeconds);
+            localStorage.removeItem('shelterTotalTime')
+        }
+
+        let sessionSeconds = 0;
+        let totalSeconds = parseInt(localStorage.getItem('shelterTotalSeconds')) || 0;
         
         let cursorTimeout;
+
         let msgInterval = null;
         let dreamInterval = null;
         let breatheInterval = null;
@@ -1392,10 +1401,37 @@
             return word5;
         }
 
+        function formatTime(totalSecs) {
+            if (totalSecs === 0) return `0 секунд`;
+            let y = Math.floor(totalSecs / 31536000);
+            totalSecs %= 31536000;
+            let mo = Math.floor(totalSecs / 2592000);
+            totalSecs %= 2592000;
+            let w = Math.floor(totalSecs / 604800);
+            totalSecs %= 604800;
+            let d = Math.floor(totalSecs / 86400);
+            totalSecs %= 86400;
+            let h = Math.floor(totalSecs / 3600);
+            totalSecs %= 3600;
+            let m = Math.floor(totalSecs / 60);
+            let s = totalSecs % 60;
+
+            let parts = [];
+            if (y > 0) parts.push(`${y} ${getPlural(y, 'год', 'года', 'лет')}`);
+            if (mo > 0) parts.push(`${mo} ${getPlural(mo, 'месяц', 'месяца', 'месяцев')}`);
+            if (w > 0) parts.push(`${w} ${getPlural(w, 'неделя', 'недели', 'недель')}`);
+            if (d > 0) parts.push(`${d} ${getPlural(d, 'день', 'дня', 'дней')}`);
+            if (h > 0) parts.push(`${h} ${getPlural(h, 'час', 'часа', 'часов')}`);
+            if (m > 0) parts.push(`${m} ${getPlural(m, 'минута', 'минуты', 'минут')}`);
+            if (s > 0 || parts.length === 0) parts.push(`${s} ${getPlural(s, 'секунда', 'секунды', 'секунд')}`);
+
+            return parts.join(' ');
+        }
+
         function updateTimerDisplay() {
-            sessionTimer.textContent = `сеанс: ${minutes} ${getPlural(minutes, 'минута', 'минуты', 'минут')}`;
-            if (totalMinutes > 0) {
-                totalTimer.textContent = `всего проведено здесь: ${totalMinutes} ${getPlural(totalMinutes, 'минута', 'минуты', 'минут')}`;
+            sessionTimer.textContent = `сеанс: ${formatTime(sessionSeconds)}`;
+            if (totalSeconds > 0) {
+                totalTimer.textContent = `всего проведено здесь: ${formatTime(totalSeconds)}`;
             } else {
                 totalTimer.textContent = '';
             }
@@ -1477,8 +1513,8 @@
             e.stopPropagation();
             lockButton(resetBtn);
             if(confirm("забыть общее время пребывания здесь?")) {
-                localStorage.removeItem('shelterTotalTime');
-                totalMinutes = 0;
+                localStorage.removeItem('shelterTotalSeconds');
+                totalSeconds = 0;
                 updateTimerDisplay();
             }
         });
@@ -1545,11 +1581,11 @@
                     }
                     
                     setInterval(() => {
-                        minutes++;
-                        totalMinutes++;
-                        localStorage.setItem('shelterTotalTime', totalMinutes);
+                        sessionSeconds++;
+                        totalSeconds++;
+                        localStorage.setItem('shelterTotalSeconds', totalSeconds);
                         updateTimerDisplay();
-                    }, 60000);
+                    }, 1000);
 
                 }).catch((e) => {
                     console.error("audio playback failed", e);
