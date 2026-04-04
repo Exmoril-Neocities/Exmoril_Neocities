@@ -684,6 +684,53 @@
             0%, 100% { transform: scale(1); opacity: 0.8; filter: drop-shadow(0 0 10px rgba(255, 200, 100, 0.5)); }
             50% { transform: scale(1.3); opacity: 1; filter: drop-shadow(0 0 20px rgba(255, 200, 100, 0.8)); }
         }
+
+        #somaticReminder {
+            position: absolute; right: 45px; bottom: 120px;
+            color: #8a8a95; font-size: 13px; letter-spacing: 3px;
+            opacity: 0; transition: opacity 4s ease-in-out; pointer-events: none; z-index: 15;
+        }
+        #somaticReminder.show { opacity: 0.6; }
+
+        #gratitudeTooltip {
+            position: fixed; background: rgba(10, 10, 15, 0.9);
+            color: #ffdfaa; padding: 10px 15px; border-radius: 8px;
+            font-size: 13px; letter-spacing: 2px; z-index: 100;
+            opacity: 0; pointer-events: none; transition: opacity 0.3s;
+            border: 1px solid rgba(255, 223, 170, 0.2); backdrop-filter: blur(5px);
+            box-shadow: 0 0 20px rgba(255, 200, 100, 0.1); transform: translate(-50%, -150%);
+        }
+
+        #panic-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #020202; z-index: 9999; display: flex;
+            flex-direction: column; justify-content: center; align-items: center;
+            opacity: 0; pointer-events: none; transition: opacity 1s ease;
+        }
+        #panic-overlay.show { opacity: 1; pointer-events: auto; }
+        
+        .panic-circle {
+            width: 150px; height: 150px; border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05); border: 2px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 0 40px rgba(255, 255, 255, 0.1);
+            animation: panicBreathe 8s infinite ease-in-out;
+        }
+        
+        #panic-text {
+            margin-top: 50px; color: #fff; font-size: 18px; letter-spacing: 5px;
+            text-align: center; opacity: 0.8; transition: opacity 2s;
+        }
+        
+        #panic-exit {
+            position: absolute; bottom: 50px; color: #6a6a75; font-size: 13px;
+            letter-spacing: 4px; cursor: pointer; transition: color 0.3s;
+        }
+        #panic-exit:hover { color: #fff; }
+
+        @keyframes panicBreathe {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.8); opacity: 1; border-color: rgba(255, 255, 255, 0.6); }
+        }
     </style>
 </head>
 <body class="theme-space">
@@ -727,8 +774,18 @@
         <div id="totalTimer" class="total-time"></div>
     </div>
 
+    <div id="somaticReminder"></div>
+    <div id="gratitudeTooltip"></div>
+    
+    <div id="panic-overlay">
+        <div class="panic-circle"></div>
+        <div id="panic-text">смотри на круг. дыши.</div>
+        <div id="panic-exit">мне лучше, закрыть</div>
+    </div>
+
     <div id="controls">
         <div class="controls-group controls-left">
+            <span class="control-btn" id="panicBtn" style="color: #c45c5c; text-shadow: 0 0 10px rgba(196,92,92,0.3);">sos</span>
             <span class="control-btn" id="breatheBtn">дыхание</span>
             <span class="control-btn" id="letgoBtn">отпустить</span>
             <span class="control-btn" id="fsBtn">экран</span>
@@ -1155,14 +1212,33 @@
         const msgElement = document.getElementById('message');
         const dreamElement = document.getElementById('dreamText');
         const breatheElement = document.getElementById('breatheText');
+
         const hint = document.getElementById('hint');
+
+        const welcomePhrases = [
+            "коснись, чтобы раствориться",
+            "оставь тревоги за экраном. коснись",
+            "сделай глубокий вдох и шагни в тишину",
+            "здесь время течет иначе. коснись",
+            "позволь себе остановиться",
+            "добро пожаловать в убежище. коснись экрана",
+            "просто дыши. коснись, чтобы начать",
+            "мы никуда не торопимся. нажми в любом месте"
+        ];
+        if (hint) {
+            hint.textContent = welcomePhrases[Math.floor(Math.random() * welcomePhrases.length)];
+        }
         const orb = document.querySelector('.orb');
         const aura = document.querySelector('.aura');
+
         const timerContainer = document.getElementById('timer');
         const sessionTimer = document.getElementById('sessionTimer');
         const totalTimer = document.getElementById('totalTimer');
+
         const flashOverlay = document.getElementById('flash-overlay');
+
         const controls = document.getElementById('controls');
+        
         const volumeBtn = document.getElementById('volumeBtn');
         
         const fsBtn = document.getElementById('fsBtn');
@@ -1177,6 +1253,41 @@
         
         const audio1 = new Audio();
         const audio2 = new Audio();
+
+        const pentatonicScale = [261.63, 293.66, 329.63, 392.00, 440.00, 523.25];
+        function playAmbientClick() {
+            if(!audioCtx || audioCtx.state !== 'running') return;
+            const osc = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(pentatonicScale[Math.floor(Math.random() * pentatonicScale.length)], audioCtx.currentTime);
+            gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+            gainNode.gain.linearRampToValueAtTime(0.05, audioCtx.currentTime + 0.1);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 3);
+            osc.connect(gainNode); gainNode.connect(audioCtx.destination);
+            osc.start(); osc.stop(audioCtx.currentTime + 3);
+        }
+
+        const somaticPhrases = ["опусти плечи", "разожми челюсть", "расслабь мышцы лица", "позволь себе опереться на спинку", "сделай медленный выдох"];
+        const somaticElement = document.getElementById('somaticReminder');
+        setInterval(() => {
+            if(isPlaying && !isBreathingMode && !document.getElementById('panic-overlay').classList.contains('show')) {
+                somaticElement.textContent = somaticPhrases[Math.floor(Math.random() * somaticPhrases.length)];
+                somaticElement.classList.add('show');
+                setTimeout(() => somaticElement.classList.remove('show'), 6000);
+            }
+        }, 50000);
+
+        let savedGratitudes = JSON.parse(localStorage.getItem('shelterGratitudes') || '[]');
+        let gratitudeStars = [];
+        const tooltip = document.getElementById('gratitudeTooltip');
+        function initGratitudeStars() {
+            gratitudeStars = savedGratitudes.map(text => ({
+                x: Math.random() * window.innerWidth, y: Math.random() * window.innerHeight,
+                text: text, radius: Math.random() * 1.5 + 1.5, pulse: Math.random() * Math.PI * 2
+            }));
+        }
+        initGratitudeStars();
 
         audio1.crossOrigin = "anonymous";
         audio2.crossOrigin = "anonymous";
@@ -1265,7 +1376,21 @@
 
         let msgIndex = 0;
         let dreamIndex = 0;
+        const currentHour = new Date().getHours();
+        const todayStr = new Date().toDateString();
+        let savedDate = localStorage.getItem('shelterLastVisit');
         let themeIndex = parseInt(localStorage.getItem('shelterThemeIndex')) || 0;
+
+        if (savedDate !== todayStr) {
+            if (currentHour >= 6 && currentHour < 12) themeIndex = themes.indexOf('theme-forest');
+            else if (currentHour >= 12 && currentHour < 18) themeIndex = themes.indexOf('theme-ocean');
+            else if (currentHour >= 18 && currentHour < 22) themeIndex = themes.indexOf('theme-sunset');
+            else themeIndex = themes.indexOf('theme-space');
+            
+            if (themeIndex === -1) themeIndex = 0;
+            localStorage.setItem('shelterLastVisit', todayStr);
+            localStorage.setItem('shelterThemeIndex', themeIndex);
+        }
         document.body.className = themes[themeIndex];
         
         let isBreathingMode = false;
@@ -1533,6 +1658,7 @@
                 ripple.style.top = `${e.clientY - 10}px`;
                 document.body.appendChild(ripple);
                 setTimeout(() => ripple.remove(), 2000);
+                playAmbientClick();
             }
 
             if (!isPlaying) {
@@ -1680,6 +1806,22 @@
             for (let i = 0; i < particles.length; i++) {
                 let p = particles[i];
 
+                if (bgRain && bgRain.volume > 0.1 && i % 4 === 0) {
+                    p.y += (15 * bgRain.volume);
+                    ctx.fillStyle = `rgba(255, 255, 255, ${p.opacity * 0.3})`;
+                    ctx.fillRect(p.x - mouseX, p.y - mouseY, 1, 10 * bgRain.volume + 5);
+                    if (p.y > height + 10) { p.y = -10; p.x = Math.random() * width; }
+                    continue;
+                }
+                if (bgFire && bgFire.volume > 0.1 && i % 5 === 0) {
+                    p.y -= (2 * bgFire.volume + 1);
+                    p.x += Math.sin(p.angle) * 3;
+                    ctx.fillStyle = `rgba(255, 120, 50, ${p.opacity * 0.8})`;
+                } else if (bgForest && bgForest.volume > 0.1) {
+                    p.y += p.speedY * 0.2;
+                    p.x += Math.sin(p.angle) * 1.5;
+                }
+
                 let bassBoost = 0;
                 if (dataArray && isPlaying) {
                     bassBoost = (dataArray[10] / 255) * 0.5;
@@ -1766,6 +1908,16 @@
                     }
                 }
             }
+            ctx.shadowBlur = 10; ctx.shadowColor = '#ffdfaa'; ctx.fillStyle = '#ffdfaa';
+            gratitudeStars.forEach(star => {
+                star.pulse += 0.02;
+                ctx.globalAlpha = 0.5 + Math.sin(star.pulse) * 0.3;
+                ctx.beginPath();
+                ctx.arc(star.x - mouseX, star.y - mouseY, star.radius, 0, Math.PI * 2);
+                ctx.fill();
+            });
+            ctx.shadowBlur = 0;
+
             ctx.globalAlpha = 1.0;
             requestAnimationFrame(animateParticles);
         }
@@ -1788,6 +1940,21 @@
             let shiftY = (e.clientY - height / 2) * 0.04;
             aura.style.marginLeft = shiftX + 'px';
             aura.style.marginTop = shiftY + 'px';
+
+            let hoveredStar = null;
+            let rawMouseX = e.clientX; let rawMouseY = e.clientY;
+            gratitudeStars.forEach(star => {
+                let dx = (star.x - mouseX) - rawMouseX;
+                let dy = (star.y - mouseY) - rawMouseY;
+                if (Math.sqrt(dx * dx + dy * dy) < 20) hoveredStar = star;
+            });
+            if (hoveredStar) {
+                tooltip.textContent = hoveredStar.text;
+                tooltip.style.left = rawMouseX + 'px'; tooltip.style.top = rawMouseY + 'px';
+                tooltip.classList.add('show'); tooltip.style.opacity = '1';
+            } else {
+                tooltip.style.opacity = '0';
+            }
         });
 
         document.addEventListener('touchmove', (e) => {
@@ -2149,6 +2316,11 @@
                 void thoughtDisplay.offsetWidth;
                 thoughtDisplay.style.animation = 'shatterThought 5s ease-out forwards';
             } else if (currentThoughtMode === 'gratitude') {
+                savedGratitudes.push(thoughtInput.value);
+                if (savedGratitudes.length > 20) savedGratitudes.shift();
+                localStorage.setItem('shelterGratitudes', JSON.stringify(savedGratitudes));
+                initGratitudeStars();
+            }
                 particles.push({
                     type: 'normal',
                     x: width / 2 + (Math.random() * 100 - 50),
@@ -2167,8 +2339,7 @@
                 orb.style.boxShadow = "0 0 120px rgba(255, 200, 100, 0.2)";
             }
             thoughtInput.value = '';
-        }
-    });
+        });
 
         document.body.addEventListener('click', (e) => {
             if(!e.target.closest('.hidden-panel') && e.target.id !== 'mixerBtn' && e.target.id !== 'volumeBtn' && e.target.id !== 'timerBtn') {
@@ -2221,6 +2392,36 @@
                 }
             };
             reader.readAsText(file);
+        });
+
+        const panicBtn = document.getElementById('panicBtn');
+        const panicOverlay = document.getElementById('panic-overlay');
+        const panicExit = document.getElementById('panic-exit');
+        const panicText = document.getElementById('panic-text');
+        let panicPhase = 0;
+        let panicInterval;
+
+        function runPanicCycle() {
+            const phrases = ["вдох", "выдох", "мы здесь", "все закончится", "ты в безопасности"];
+            panicText.textContent = phrases[panicPhase];
+            panicText.style.opacity = 1;
+            setTimeout(() => panicText.style.opacity = 0, 3000);
+            panicPhase = (panicPhase + 1) % phrases.length;
+        }
+
+        panicBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            panicOverlay.classList.add('show');
+            if(activeAudio) activeAudio.volume = MAX_VOLUME * 0.1;
+            panicPhase = 0;
+            runPanicCycle();
+            panicInterval = setInterval(runPanicCycle, 4000);
+        });
+
+        panicExit.addEventListener('click', () => {
+            panicOverlay.classList.remove('show');
+            clearInterval(panicInterval);
+            if(activeAudio) activeAudio.volume = MAX_VOLUME;
         });
     </script>
 </body>
