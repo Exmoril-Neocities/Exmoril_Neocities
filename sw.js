@@ -1,4 +1,4 @@
-const CACHE_NAME = 'sanctuary-cache-v5';
+const CACHE_NAME = 'shelter-cache-v5';
 const urlsToCache = [
     '/',
     '/index.html',
@@ -80,6 +80,8 @@ self.addEventListener('activate', event => {
 });
 
 self.addEventListener('fetch', event => {
+    if (!event.request.url.startsWith('http')) return;
+
     event.respondWith(
         caches.match(event.request).then(cachedResponse => {
             if (cachedResponse) {
