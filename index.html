@@ -662,6 +662,22 @@
             color: #ffffff;
             text-shadow: 0 0 10px rgba(255,255,255,0.3);
         }
+
+        body.zen-mode #controls, 
+        body.zen-mode footer, 
+        body.zen-mode #timer, 
+        body.zen-mode .text-container {
+            opacity: 0 !important;
+            pointer-events: none !important;
+        }
+
+        #thought-modes .mode-btn { color: #555560; }
+        #thought-modes .mode-btn.active { color: #fff; text-shadow: 0 0 10px rgba(255,255,255,0.3); }
+
+        @keyframes pulseGratitude {
+            0%, 100% { transform: scale(1); opacity: 0.8; filter: drop-shadow(0 0 10px rgba(255, 200, 100, 0.5)); }
+            50% { transform: scale(1.3); opacity: 1; filter: drop-shadow(0 0 20px rgba(255, 200, 100, 0.8)); }
+        }
     </style>
 </head>
 <body class="theme-space">
@@ -729,6 +745,12 @@
         </div>
     </div>
 
+    <div id="breathe-panel" class="hidden-panel" style="right: auto; left: 45px;">
+        <span class="sleep-option breathe-opt" data-pattern="basic">базовое (4-4)</span>
+        <span class="sleep-option breathe-opt" data-pattern="box">квадрат (4-4-4-4)</span>
+        <span class="sleep-option breathe-opt" data-pattern="sleep">сон (4-7-8)</span>
+    </div>
+
     <div id="mixer-panel" class="hidden-panel">
         <div class="mixer-item">
             <span>дождь</span>
@@ -742,24 +764,51 @@
             <span>лес</span>
             <input type="range" id="forestVol" min="0" max="1" step="0.01" value="0">
         </div>
+        <div class="mixer-item">
+            <span>океан</span>
+            <input type="range" id="oceanVol" min="0" max="1" step="0.01" value="0">
+        </div>
+        <div class="mixer-item">
+            <span>кот</span>
+            <input type="range" id="catVol" min="0" max="1" step="0.01" value="0">
+        </div>
+        <div class="mixer-item">
+            <span>бинаурал</span>
+            <input type="range" id="binauralVol" min="0" max="1" step="0.01" value="0">
+        </div>
     </div>
 
-    <div id="sleep-panel" class="hidden-panel">
-        <span class="sleep-option" data-time="15">15 мин</span>
-        <span class="sleep-option" data-time="30">30 мин</span>
-        <span class="sleep-option" data-time="60">60 мин</span>
-        <span class="sleep-option" data-time="0" style="color:#a0a0b0;">откл</span>
+    <div id="sleep-panel" class="hidden-panel" style="flex-wrap: wrap; width: 200px;">
+        <span style="width:100%; color:#555560; font-size:10px; text-align:center;">сон</span>
+        <span class="sleep-option" data-time="15">15м</span>
+        <span class="sleep-option" data-time="30">30м</span>
+        <span class="sleep-option" data-time="60">60м</span>
+        <span style="width:100%; color:#555560; font-size:10px; text-align:center; margin-top:5px;">фокус</span>
+        <span class="sleep-option focus-option" data-time="25">25м</span>
+        <span class="sleep-option focus-option" data-time="50">50м</span>
+        <span class="sleep-option" data-time="0" style="color:#a0a0b0; width:100%; text-align:center;">откл</span>
     </div>
 
     <div id="thought-overlay" class="hidden-overlay">
-        <input type="text" id="thoughtInput" placeholder="напиши свою тревогу и нажми enter..." autocomplete="off">
+    <div id="thought-modes" style="position:absolute; top:20%; display:flex; gap:20px;">
+        <span class="control-btn mode-btn active" data-mode="anxiety">тревога</span>
+        <span class="control-btn mode-btn" data-mode="gratitude">свет</span>
+        <span class="control-btn mode-btn" data-mode="grounding">заземление</span>
+    </div>
+    <input type="text" id="thoughtInput" placeholder="напиши свою тревогу и нажми enter..." autocomplete="off">
+    <div id="groundingText" style="display:none; color:#fff; font-size:18px; letter-spacing:2px; text-align:center; max-width:600px; line-height:1.6;"></div>
     </div>
     
     <div id="thought-display"></div>
     <div id="sleep-blackout"></div>
     
     <footer>
-      <p>© 2025–2026 Exmoril. Все права защищены. <a href="LICENSE.txt" target="_blank">Авторские права и Условия использования.</a> </p>
+    <p>© 2025–2026 Exmoril. Все права защищены. <a href="LICENSE.txt" target="_blank">Авторские права и Условия использования.</a></p>
+    <div style="margin-top: 8px; display: flex; justify-content: center; gap: 15px;">
+        <span id="installBtn" style="cursor:pointer; display:none;">установить приложение</span>
+        <span id="exportBtn" style="cursor:pointer;">сохранить прогресс</span>
+        <label style="cursor:pointer;">вспомнить <input type="file" id="importBtn" style="display:none;" accept=".json"></label>
+    </div>
     </footer>
     
     <script>
@@ -1434,53 +1483,6 @@
             }
         });
 
-        breatheBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            isBreathingMode = !isBreathingMode;
-            
-            if (isBreathingMode) {
-                breatheBtn.textContent = "мысли";
-                msgElement.classList.add('hidden-mode');
-                dreamElement.classList.add('hidden-mode');
-                breatheElement.classList.add('active-mode');
-                
-                clearInterval(msgInterval);
-                clearInterval(dreamInterval);
-                
-                let isBreatheIn = true;
-                breatheElement.textContent = "вдох";
-                document.title = "вдох...";
-                breatheElement.classList.add('inhale');
-                breatheElement.classList.remove('exhale');
-                
-                breatheInterval = setInterval(() => {
-                    isBreatheIn = !isBreatheIn;
-                    if (isBreatheIn) {
-                        breatheElement.textContent = "вдох";
-                        document.title = "вдох...";
-                        breatheElement.classList.add('inhale');
-                        breatheElement.classList.remove('exhale');
-                    } else {
-                        breatheElement.textContent = "выдох";
-                        document.title = "выдох...";
-                        breatheElement.classList.add('exhale');
-                        breatheElement.classList.remove('inhale');
-                    }
-                }, 8000);
-
-            } else {
-                breatheBtn.textContent = "дыхание";
-                document.title = "убежище";
-                msgElement.classList.remove('hidden-mode');
-                dreamElement.classList.remove('hidden-mode');
-                breatheElement.classList.remove('active-mode');
-                breatheElement.classList.remove('inhale', 'exhale');
-                
-                clearInterval(breatheInterval);
-                startTextTimers();
-            }
-        });
-
         document.body.addEventListener('click', (e) => {
             if (!e.target.closest('#controls') && !e.target.closest('footer') && !e.target.closest('.hidden-panel')) {
                 const ripple = document.createElement('div');
@@ -1635,9 +1637,27 @@
             
             for (let i = 0; i < particles.length; i++) {
                 let p = particles[i];
+
+                let bassBoost = 0;
+                if (dataArray && isPlaying) {
+                    bassBoost = (dataArray[10] / 255) * 0.5;
+                }
                 
                 if (p.type === 'normal') {
                     let currentTheme = document.body.className;
+                    p.angle += p.swaySpeed + (bassBoost * 0.05);
+                    p.x += Math.sin(p.angle) * (p.swayAmount + bassBoost);
+
+                    ctx.globalAlpha = Math.min(1, p.opacity + bassBoost);
+
+                    if (p.isGratitude) {
+                        ctx.fillStyle = '#ffdfaa';
+                        ctx.shadowBlur = 15;
+                        ctx.shadowColor = '#ffdfaa';
+                    } else {
+                        ctx.fillStyle = '#ffffff';
+                        ctx.shadowBlur = 0;
+                    }
                     
                     if (currentTheme === 'theme-void') {
                         p.y += p.speedY * 1.2;
@@ -1779,7 +1799,90 @@
                 } catch (err) { console.log('Wake Lock error:', err); }
             }
         }
-        breatheBtn.addEventListener('click', () => toggleWakeLock(isBreathingMode));
+        
+        const breathePanel = document.getElementById('breathe-panel');
+        let currentBreatheTimeout;
+
+        breatheBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            
+            if (isBreathingMode) {
+                isBreathingMode = false;
+                breatheBtn.textContent = "дыхание";
+                breatheBtn.style.color = '';
+                document.title = "убежище";
+                
+                msgElement.classList.remove('hidden-mode');
+                dreamElement.classList.remove('hidden-mode');
+                breatheElement.classList.remove('active-mode', 'inhale', 'exhale');
+                breatheElement.style.transition = ''; 
+                breatheElement.style.opacity = '0';
+                
+                clearTimeout(currentBreatheTimeout);
+                startTextTimers();
+            } else {
+                breathePanel.classList.toggle('show');
+                mixerPanel.classList.remove('show');
+                sleepPanel.classList.remove('show');
+                volumePanel.classList.remove('show');
+            }
+        });
+
+        document.querySelectorAll('.breathe-opt').forEach(opt => {
+            opt.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const pattern = opt.getAttribute('data-pattern');
+                startBreathing(pattern);
+                breathePanel.classList.remove('show');
+            });
+        });
+
+        function startBreathing(pattern) {
+            isBreathingMode = true;
+            clearTimeout(currentBreatheTimeout);
+            clearInterval(msgInterval);
+            clearInterval(dreamInterval);
+    
+            msgElement.classList.add('hidden-mode');
+            dreamElement.classList.add('hidden-mode');
+            breatheElement.classList.add('active-mode');
+            breatheBtn.style.color = '#fff';
+
+            function runPhase(text, duration, nextPhaseFunc) {
+                breatheElement.textContent = text;
+                breatheElement.className = 'active-mode';
+                if(text === 'вдох') {
+                    breatheElement.style.transition = `transform ${duration}ms linear, opacity ${duration}ms ease, filter ${duration}ms ease`;
+                    breatheElement.style.transform = 'scale(1.2)';
+                    breatheElement.style.opacity = '1';
+                    breatheElement.style.filter = 'blur(0px)';
+                } else if (text === 'выдох') {
+                    breatheElement.style.transition = `transform ${duration}ms linear, opacity ${duration}ms ease, filter ${duration}ms ease`;
+                    breatheElement.style.transform = 'scale(0.85)';
+                    breatheElement.style.opacity = '0.3';
+                    breatheElement.style.filter = 'blur(2px)';
+                } else {
+                    breatheElement.style.transition = `opacity 1s ease`;
+                    breatheElement.style.opacity = '0.8';
+                }
+
+                currentBreatheTimeout = setTimeout(nextPhaseFunc, duration);
+            }
+
+            function cycleBasic() {
+                runPhase('вдох', 4000, () => runPhase('выдох', 4000, cycleBasic));
+            }
+            function cycleBox() {
+                runPhase('вдох', 4000, () => runPhase('задержка', 4000, () => runPhase('выдох', 4000, () => runPhase('задержка', 4000, cycleBox))));
+            }
+            function cycleSleep() {
+                runPhase('вдох', 4000, () => runPhase('задержка', 7000, () => runPhase('выдох', 8000, cycleSleep)));
+            }
+
+            if (pattern === 'basic') cycleBasic();
+            if (pattern === 'box') cycleBox();
+            if (pattern === 'sleep') cycleSleep();
+        }
 
         const mixerBtn = document.getElementById('mixerBtn');
         const mixerPanel = document.getElementById('mixer-panel');
@@ -1792,14 +1895,64 @@
         const bgRain = new Audio('https://cdn.jsdelivr.net/gh/Exmoril-Neocities/Exmoril_Neocities@main/rain.mp3');
         const bgFire = new Audio('https://cdn.jsdelivr.net/gh/Exmoril-Neocities/Exmoril_Neocities@main/fire.mp3');
         const bgForest = new Audio('https://cdn.jsdelivr.net/gh/Exmoril-Neocities/Exmoril_Neocities@main/crickets.mp3');
-        [bgRain, bgFire, bgForest].forEach(a => { a.loop = true; a.volume = 0; a.muted = isGlobalMuted; a.crossOrigin = "anonymous"; });
+        const bgOcean = new Audio('https://cdn.jsdelivr.net/gh/Exmoril-Neocities/Exmoril_Neocities@main/ocean.mp3');
+        const bgCat = new Audio('https://cdn.jsdelivr.net/gh/Exmoril-Neocities/Exmoril_Neocities@main/cat.mp3');
+        const bowlSound = new Audio('https://cdn.jsdelivr.net/gh/Exmoril-Neocities/Exmoril_Neocities@main/bowl.mp3');
+
+        [bgOcean, bgCat].forEach(a => { a.loop = true; a.volume = 0; a.muted = isGlobalMuted; a.crossOrigin = "anonymous"; });
+
+        document.getElementById('oceanVol').addEventListener('input', e => bgOcean.volume = e.target.value);
+        document.getElementById('catVol').addEventListener('input', e => bgCat.volume = e.target.value);
+
+        let oscLeft, oscRight, binauralGain;
+        function initBinaural() {
+            if(!audioCtx) return;
+            const merger = audioCtx.createChannelMerger(2);
+            oscLeft = audioCtx.createOscillator();
+            oscRight = audioCtx.createOscillator();
+            binauralGain = audioCtx.createGain();
+    
+            oscLeft.frequency.value = 200;
+            oscRight.frequency.value = 206;
+    
+            const panLeft = audioCtx.createStereoPanner();
+            panLeft.pan.value = -1;
+            const panRight = audioCtx.createStereoPanner();
+            panRight.pan.value = 1;
+    
+            oscLeft.connect(panLeft).connect(merger, 0, 0);
+            oscRight.connect(panRight).connect(merger, 0, 1);
+    
+            merger.connect(binauralGain);
+            binauralGain.connect(audioCtx.destination);
+    
+            binauralGain.gain.value = 0;
+            oscLeft.start();
+            oscRight.start();
+        }
+
+        document.getElementById('binauralVol').addEventListener('input', e => {
+            if(!oscLeft && e.target.value > 0) initBinaural();
+            if(binauralGain) binauralGain.gain.value = e.target.value * 0.1;
+        });
+
+        document.addEventListener('dblclick', (e) => {
+            if (e.target.closest('#controls') || e.target.closest('footer') || e.target.closest('.hidden-panel')) return;
+            document.body.classList.toggle('zen-mode');
+        });
 
         mixerBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             mixerPanel.classList.toggle('show');
             sleepPanel.classList.remove('show');
             volumePanel.classList.remove('show');
-            if (bgRain.paused && isPlaying) { bgRain.play(); bgFire.play(); bgForest.play(); }
+            if (bgRain.paused && isPlaying) { 
+                bgRain.play(); 
+                bgFire.play(); 
+                bgForest.play(); 
+                bgOcean.play(); 
+                bgCat.play(); 
+            }
         });
 
         volumeBtn.addEventListener('click', (e) => {
@@ -1842,7 +1995,7 @@
             if (activeAudio) activeAudio.volume = MAX_VOLUME;
         });
 
-        document.querySelectorAll('.sleep-option').forEach(opt => {
+        document.querySelectorAll('#sleep-panel .sleep-option').forEach(opt => {
             opt.addEventListener('click', (e) => {
                 e.stopPropagation();
                 document.querySelectorAll('.sleep-option').forEach(o => o.classList.remove('active'));
@@ -1853,9 +2006,14 @@
                 sleepBlackout.style.opacity = '0';
                 
                 let mins = parseInt(opt.getAttribute('data-time'));
+                let isFocus = opt.classList.contains('focus-option');
                 if (mins > 0) {
                     timerBtn.textContent = `сон (${mins}м)`;
                     sleepTimeout = setTimeout(() => {
+                        if (isFocus) {
+                            bowlSound.play();
+                            timerBtn.textContent = 'сон';
+                        } else { 
                         sleepBlackout.style.opacity = '1';
                         let currentVol = MAX_VOLUME;
                         sleepFadeInterval = setInterval(() => {
@@ -1865,13 +2023,17 @@
                                 bgRain.volume = bgRain.volume * 0.9;
                                 bgFire.volume = bgFire.volume * 0.9;
                                 bgForest.volume = bgForest.volume * 0.9;
+                                bgOcean.volume = bgOcean.volume * 0.9;
+                                bgCat.volume = bgCat.volume * 0.9;
+                                if (binauralGain) binauralGain.gain.value *= 0.9;
                             } else {
                                 isGlobalMuted = true;
                                 activeAudio.muted = true;
                                 clearInterval(sleepFadeInterval);
                             }
                         }, 1200);
-                    }, (mins - 1) * 60000);
+                    }
+                }, (mins - 1) * 60000);
                 } else {
                     timerBtn.textContent = 'сон';
                     activeAudio.volume = MAX_VOLUME;
@@ -1892,33 +2054,79 @@
             setTimeout(() => thoughtInput.focus(), 100);
         });
 
+        let currentThoughtMode = 'anxiety';
+        const groundingSteps = [
+            "найди 5 вещей, которые ты сейчас видишь",
+            "обрати внимание на 4 вещи, которые можешь потрогать",
+            "прислушайся к 3 звукам вокруг тебя",
+            "почувствуй 2 запаха",
+            "назови 1 эмоцию, которую испытываешь прямо сейчас",
+            "дыши. ты в безопасности."
+        ];
+        let groundingIndex = 0;
+
+        document.querySelectorAll('.mode-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                currentThoughtMode = e.target.getAttribute('data-mode');
+        
+                const input = document.getElementById('thoughtInput');
+                const text = document.getElementById('groundingText');
+        
+                if (currentThoughtMode === 'grounding') {
+                    input.style.display = 'none';
+                    text.style.display = 'block';
+                    groundingIndex = 0;
+                    text.textContent = groundingSteps[0] + " (кликни для продолжения)";
+                } else {
+                    input.style.display = 'block';
+                    text.style.display = 'none';
+                    input.placeholder = currentThoughtMode === 'anxiety' ? "напиши свою тревогу..." : "за что ты благодарен сегодня?";
+                    input.focus();
+                }
+            });
+        });
+
+        document.getElementById('groundingText').addEventListener('click', () => {
+            groundingIndex++;
+            if(groundingIndex < groundingSteps.length) {
+                document.getElementById('groundingText').textContent = groundingSteps[groundingIndex] + (groundingIndex === groundingSteps.length-1 ? "" : " (далее)");
+            } else {
+                thoughtOverlay.classList.remove('show');
+            }
+        });
+
         thoughtInput.addEventListener('keydown', (e) => {
             if (e.key === 'Enter' && thoughtInput.value.trim() !== '') {
                 thoughtOverlay.classList.remove('show');
-                
+        
+            if (currentThoughtMode === 'anxiety') {
                 thoughtDisplay.textContent = thoughtInput.value;
                 thoughtDisplay.style.animation = 'none';
                 void thoughtDisplay.offsetWidth;
                 thoughtDisplay.style.animation = 'shatterThought 5s ease-out forwards';
-                
-                for (let i = 0; i < 40; i++) {
-                    particles.push({
-                        type: 'normal',
-                        x: width / 2,
-                        y: height / 2,
-                        radius: Math.random() * 2 + 1,
-                        opacity: 1,
-                        speedY: (Math.random() - 0.5) * 5,
-                        pulseSpeed: 0.02,
-                        pulseDir: -1,
-                        angle: Math.random() * Math.PI * 2,
-                        swaySpeed: (Math.random() - 0.5) * 0.1,
-                        swayAmount: Math.random() * 5 + 2,
-                        isStar: true
-                    });
-                }
+            } else if (currentThoughtMode === 'gratitude') {
+                particles.push({
+                    type: 'normal',
+                    x: width / 2 + (Math.random() * 100 - 50),
+                    y: height / 2 + (Math.random() * 100 - 50),
+                    radius: Math.random() * 2 + 2,
+                    opacity: 0.8,
+                    speedY: Math.random() * 0.05,
+                    pulseSpeed: 0.005,
+                    pulseDir: 1,
+                    angle: Math.random() * Math.PI * 2,
+                    swaySpeed: 0.005,
+                    swayAmount: 0.5,
+                    isStar: true,
+                    isGratitude: true
+                });
+                orb.style.boxShadow = "0 0 120px rgba(255, 200, 100, 0.2)";
             }
-        });
+            thoughtInput.value = '';
+        }
+    });
 
         document.body.addEventListener('click', (e) => {
             if(!e.target.closest('.hidden-panel') && e.target.id !== 'mixerBtn' && e.target.id !== 'volumeBtn' && e.target.id !== 'timerBtn') {
@@ -1927,6 +2135,50 @@
                 volumePanel.classList.remove('show');
             }
             if (thoughtInput.value.trim() === '') thoughtOverlay.classList.remove('show');
+        });
+
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            document.getElementById('installBtn').style.display = 'inline-block';
+        });
+
+        document.getElementById('installBtn').addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                if (outcome === 'accepted') document.getElementById('installBtn').style.display = 'none';
+                deferredPrompt = null;
+            }
+        });
+
+        document.getElementById('exportBtn').addEventListener('click', () => {
+            const data = JSON.stringify(localStorage);
+            const blob = new Blob([data], {type: 'application/json'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'sanctuary_memories.json';
+            a.click();
+            URL.revokeObjectURL(url);
+        });
+
+        document.getElementById('importBtn').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    for (let key in data) localStorage.setItem(key, data[key]);
+                    alert('воспоминания восстановлены. страница будет перезагружена.');
+                    location.reload();
+                } catch(err) {
+                    alert('не удалось прочитать файл воспоминаний.');
+                }
+            };
+            reader.readAsText(file);
         });
     </script>
 </body>

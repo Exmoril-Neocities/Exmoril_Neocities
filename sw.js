@@ -1,4 +1,4 @@
-const CACHE_NAME = 'sanctuary-cache-v2';
+const CACHE_NAME = 'sanctuary-cache-v3';
 const urlsToCache = [
     '/',
     '/index.html',
@@ -49,7 +49,13 @@ const urlsToCache = [
     "https://cdn.jsdelivr.net/gh/Exmoril-Neocities/Exmoril_Neocities@main/music/music36.mp3",
     "https://cdn.jsdelivr.net/gh/Exmoril-Neocities/Exmoril_Neocities@main/music/music37.mp3",
     "https://cdn.jsdelivr.net/gh/Exmoril-Neocities/Exmoril_Neocities@main/music/music38.mp3",
-    "https://cdn.jsdelivr.net/gh/Exmoril-Neocities/Exmoril_Neocities@main/music/music39.mp3"
+    "https://cdn.jsdelivr.net/gh/Exmoril-Neocities/Exmoril_Neocities@main/music/music39.mp3",
+    "https://cdn.jsdelivr.net/gh/Exmoril-Neocities/Exmoril_Neocities@main/rain.mp3",
+    "https://cdn.jsdelivr.net/gh/Exmoril-Neocities/Exmoril_Neocities@main/fire.mp3",
+    "https://cdn.jsdelivr.net/gh/Exmoril-Neocities/Exmoril_Neocities@main/crickets.mp3",
+    "https://cdn.jsdelivr.net/gh/Exmoril-Neocities/Exmoril_Neocities@main/ocean.mp3",
+    "https://cdn.jsdelivr.net/gh/Exmoril-Neocities/Exmoril_Neocities@main/cat.mp3",
+    "https://cdn.jsdelivr.net/gh/Exmoril-Neocities/Exmoril_Neocities@main/bowl.mp3"
 ];
 
 self.addEventListener('install', event => {
