@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="utf-8">
@@ -360,10 +360,10 @@
 
         #timer {
             position: absolute;
-            bottom: 85px;
+            bottom: 70px;
             width: 100%;
             text-align: center;
-            font-size: 13px;
+            font-size: 15px;
             color: #6a6a75;
             z-index: 10;
             letter-spacing: 4px;
@@ -373,6 +373,7 @@
             flex-direction: column;
             gap: 12px;
             text-shadow: 0 2px 5px rgba(0,0,0,0.5);
+            pointer-events: none;
         }
         
         #timer.visible {
@@ -380,9 +381,9 @@
         }
 
         .total-time {
-            font-size: 11px;
-            color: #555560;
-            letter-spacing: 3px;
+            font-size: 15px;
+            color: #6a6a75;
+            letter-spacing: 4px;
         }
 
         #hint {
@@ -406,21 +407,21 @@
 
         #controls {
             position: absolute;
-            bottom: 35px;
+            bottom: 55px;
             left: 0;
             width: 100%;
             padding: 0 45px;
             box-sizing: border-box;
-            font-size: 13px;
+            font-size: 15px;
             color: #7a7a85;
             z-index: 20;
             letter-spacing: 3px;
-            opacity: 0;
-            transition: opacity 3s ease-in-out;
-            pointer-events: none;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 3s ease-in-out, visibility 3s ease-in-out;
         }
 
         .controls-group {
@@ -432,7 +433,9 @@
 
         #controls.visible {
             opacity: 0.4;
+            visibility: visible;
             pointer-events: auto;
+            transition: opacity 3s ease-in-out, visibility 0s;
         }
 
         #controls.visible:hover {
@@ -456,7 +459,7 @@
                 flex-direction: column;
                 gap: 20px;
                 padding: 0 15px;
-                bottom: 25px;
+                bottom: 45px;
             }
             .controls-group {
                 justify-content: center;
@@ -484,29 +487,32 @@
             width: 100%;
             text-align: center;
             font-size: 11px;
-            color: #555560;
-            letter-spacing: 3px;
+            color: #6a6a75;
+            letter-spacing: 4px;
             z-index: 20;
             opacity: 0;
             transition: opacity 6s ease-in-out;
-            pointer-events: auto;
+            pointer-events: none;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.5);
         }
 
         footer.visible {
-            opacity: 0.4;
+            opacity: 0.75;
         }
 
         footer:hover {
             opacity: 1;
         }
 
-        footer a {
-            color: #6a6a75;
+        footer a, footer span, footer label {
+            pointer-events: auto;
+            color: #6a6a75; 
             text-decoration: none;
             transition: color 0.5s ease-in-out, text-shadow 0.5s ease-in-out;
+            cursor: pointer;
         }
 
-        footer a:hover {
+        footer a:hover, footer span:hover, footer label:hover {
             color: #ffffff;
             text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
         }
