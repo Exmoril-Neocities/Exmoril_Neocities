@@ -360,7 +360,7 @@
 
         #timer {
             position: absolute;
-            bottom: 45px;
+            bottom: 85px;
             width: 100%;
             text-align: center;
             font-size: 13px;
@@ -1248,23 +1248,23 @@
         let isPlaying = false;
         let isCrossfading = false;
         
-        let isGlobalMuted = localStorage.getItem('sanctuaryMuted') === 'true';
+        let isGlobalMuted = localStorage.getItem('shelterMuted') === 'true';
         volumeBtn.textContent = isGlobalMuted ? "тишина" : "звук";
         
         const CROSSFADE_TIME = 4;
-        let savedVolume = localStorage.getItem('sanctuaryVolume');
+        let savedVolume = localStorage.getItem('shelterVolume');
         let MAX_VOLUME = savedVolume !== null ? parseFloat(savedVolume) : 0.35;
         const volumeSlider = document.getElementById('volumeSlider');
         volumeSlider.value = isGlobalMuted ? 0 : MAX_VOLUME;
 
         let msgIndex = 0;
         let dreamIndex = 0;
-        let themeIndex = parseInt(localStorage.getItem('sanctuaryThemeIndex')) || 0;
+        let themeIndex = parseInt(localStorage.getItem('shelterThemeIndex')) || 0;
         document.body.className = themes[themeIndex];
         
         let isBreathingMode = false;
         let minutes = 0;
-        let totalMinutes = parseInt(localStorage.getItem('sanctuaryTotalTime')) || 0;
+        let totalMinutes = parseInt(localStorage.getItem('shelterTotalTime')) || 0;
         
         let cursorTimeout;
         let msgInterval = null;
@@ -1470,14 +1470,14 @@
             document.body.classList.remove(themes[themeIndex]);
             themeIndex = (themeIndex + 1) % themes.length;
             document.body.classList.add(themes[themeIndex]);
-            localStorage.setItem('sanctuaryThemeIndex', themeIndex);
+            localStorage.setItem('shelterThemeIndex', themeIndex);
         });
 
         resetBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             lockButton(resetBtn);
             if(confirm("забыть общее время пребывания здесь?")) {
-                localStorage.removeItem('sanctuaryTotalTime');
+                localStorage.removeItem('shelterTotalTime');
                 totalMinutes = 0;
                 updateTimerDisplay();
             }
@@ -1547,12 +1547,12 @@
                     setInterval(() => {
                         minutes++;
                         totalMinutes++;
-                        localStorage.setItem('sanctuaryTotalTime', totalMinutes);
+                        localStorage.setItem('shelterTotalTime', totalMinutes);
                         updateTimerDisplay();
                     }, 60000);
 
                 }).catch((e) => {
-                    console.error("Audio playback failed", e);
+                    console.error("audio playback failed", e);
                 });
             }
         });
@@ -1976,7 +1976,7 @@
         volumeSlider.addEventListener('input', (e) => {
             e.stopPropagation();
             MAX_VOLUME = parseFloat(e.target.value);
-            localStorage.setItem('sanctuaryVolume', MAX_VOLUME);
+            localStorage.setItem('shelterVolume', MAX_VOLUME);
             
             if (MAX_VOLUME === 0) {
                 isGlobalMuted = true;
@@ -1991,7 +1991,7 @@
                 bgFire.muted = false;
                 bgForest.muted = false;
             }
-            localStorage.setItem('sanctuaryMuted', isGlobalMuted);
+            localStorage.setItem('shelterMuted', isGlobalMuted);
             if (activeAudio) activeAudio.volume = MAX_VOLUME;
         });
 
@@ -2159,7 +2159,7 @@
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = 'sanctuary_memories.json';
+            a.download = 'shelter_memories.json';
             a.click();
             URL.revokeObjectURL(url);
         });
