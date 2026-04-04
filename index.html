@@ -1725,6 +1725,15 @@
             }
         });
         
+        const bgRain = new Audio('https://cdn.jsdelivr.net/gh/Exmoril-Neocities/Exmoril_Neocities@main/rain.mp3');
+        const bgFire = new Audio('https://cdn.jsdelivr.net/gh/Exmoril-Neocities/Exmoril_Neocities@main/fire.mp3');
+        const bgForest = new Audio('https://cdn.jsdelivr.net/gh/Exmoril-Neocities/Exmoril_Neocities@main/crickets.mp3');
+        const bgOcean = new Audio('https://cdn.jsdelivr.net/gh/Exmoril-Neocities/Exmoril_Neocities@main/ocean.mp3');
+        const bgCat = new Audio('https://cdn.jsdelivr.net/gh/Exmoril-Neocities/Exmoril_Neocities@main/cat.mp3');
+        const bowlSound = new Audio('https://cdn.jsdelivr.net/gh/Exmoril-Neocities/Exmoril_Neocities@main/bowl.mp3');
+
+        [bgOcean, bgCat].forEach(a => { a.loop = true; a.volume = 0; a.muted = isGlobalMuted; a.crossOrigin = "anonymous"; });
+
         const canvas = document.getElementById('particles');
         const ctx = canvas.getContext('2d');
         let width, height;
@@ -2100,15 +2109,6 @@
         const volumePanel = document.getElementById('volume-panel');
         const sleepBlackout = document.getElementById('sleep-blackout');
         let sleepTimeout, sleepFadeInterval;
-
-        const bgRain = new Audio('https://cdn.jsdelivr.net/gh/Exmoril-Neocities/Exmoril_Neocities@main/rain.mp3');
-        const bgFire = new Audio('https://cdn.jsdelivr.net/gh/Exmoril-Neocities/Exmoril_Neocities@main/fire.mp3');
-        const bgForest = new Audio('https://cdn.jsdelivr.net/gh/Exmoril-Neocities/Exmoril_Neocities@main/crickets.mp3');
-        const bgOcean = new Audio('https://cdn.jsdelivr.net/gh/Exmoril-Neocities/Exmoril_Neocities@main/ocean.mp3');
-        const bgCat = new Audio('https://cdn.jsdelivr.net/gh/Exmoril-Neocities/Exmoril_Neocities@main/cat.mp3');
-        const bowlSound = new Audio('https://cdn.jsdelivr.net/gh/Exmoril-Neocities/Exmoril_Neocities@main/bowl.mp3');
-
-        [bgOcean, bgCat].forEach(a => { a.loop = true; a.volume = 0; a.muted = isGlobalMuted; a.crossOrigin = "anonymous"; });
 
         document.getElementById('oceanVol').addEventListener('input', e => bgOcean.volume = e.target.value);
         document.getElementById('catVol').addEventListener('input', e => bgCat.volume = e.target.value);
