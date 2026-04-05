@@ -236,10 +236,10 @@
         }
 
         .orb.active .globe-shadow {
-            box-shadow: 
-                inset -30px -30px 45px rgba(0, 0, 0, 0.95), 
-                inset 10px 10px 25px rgba(135, 206, 235, 0.25);
-        }
+    box-shadow: 
+        inset -30px -30px 45px rgba(0, 0, 0, 0.95),
+        inset 10px 10px 25px rgba(135, 206, 235, 0.25);
+}
 
         .night-wrapper {
             position: absolute;
@@ -260,6 +260,7 @@
         .globe-night {
             background-image: url('earth_nightmap.jpg');
             mix-blend-mode: screen; 
+            filter: brightness(2.5) contrast(1.5);
         }
 
         @keyframes spinGlobe {

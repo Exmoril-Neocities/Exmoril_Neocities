@@ -1,4 +1,4 @@
-const CACHE_NAME = 'shelter-cache-v22';
+const CACHE_NAME = 'shelter-cache-v24';
 const urlsToCache = [
     '/',
     '/index.html',
