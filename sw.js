@@ -1,8 +1,9 @@
-const CACHE_NAME = 'shelter-cache-v18';
+const CACHE_NAME = 'shelter-cache-v20';
 const urlsToCache = [
     '/',
     '/index.html',
-    '/map.svg',
+    '/earth_daymap.jpg',
+    '/earth_nightmap.jpg',
     '/favicon.png',
     '/favicon.ico',
     '/favicon.svg',

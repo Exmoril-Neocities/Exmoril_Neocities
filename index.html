@@ -15,6 +15,8 @@
     <meta name="color-scheme" content="dark"> 
     <meta name="mobile-web-app-capable" content="yes"> 
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"> 
+    <link rel="preload" as="image" href="earth_daymap.jpg">
+    <link rel="preload" as="image" href="earth_nightmap.jpg">
     <link rel="icon" type="image/png" href="/favicon.png">
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
     <link rel="icon" type="image/svg" href="/favicon.svg">
@@ -116,6 +118,25 @@
             100% { background: radial-gradient(circle at center, #120e1a 0%, #040307 100%); }
         }
 
+        @keyframes ambientWinter {
+            0% { background: radial-gradient(circle at center, #0a0e15 0%, #030507 100%); }
+            50% { background: radial-gradient(circle at center, #101520 0%, #05070a 100%); }
+            100% { background: radial-gradient(circle at center, #0c121a 0%, #040608 100%); }
+        }
+
+        @keyframes ambientMagma {
+            0% { background: radial-gradient(circle at center, #1a0505 0%, #070101 100%); }
+            50% { background: radial-gradient(circle at center, #250a05 0%, #0a0201 100%); }
+            100% { background: radial-gradient(circle at center, #1e0704 0%, #080101 100%); }
+        }
+
+        body.theme-winter {
+            animation: ambientWinter 80s infinite alternate ease-in-out, fadeInBody 6s ease-in-out;
+        }
+        body.theme-magma {
+            animation: ambientMagma 80s infinite alternate ease-in-out, fadeInBody 6s ease-in-out;
+        }
+
         #particles {
             position: absolute;
             top: 0;
@@ -167,55 +188,46 @@
 
         .orb {
             position: absolute;
-            top: 40%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 140px;
-            height: 140px;
-            border-radius: 50%;
-            background: radial-gradient(circle at 40% 40%, #2a2a30 0%, #050507 60%, #000 100%);
-            box-shadow: 0 0 40px rgba(255, 255, 255, 0.01); 
+            top: 40%; left: 50%; width: 140px; height: 140px; border-radius: 50%;
+            background: radial-gradient(circle at 35% 35%, #195875 0%, #0c2838 50%, #02070a 100%);
+            box-shadow: 0 0 25px rgba(84, 169, 219, 0.1); 
             transition: all 8s ease-in-out;
             overflow: hidden; 
             -webkit-mask-image: -webkit-radial-gradient(white, black);
             mask-image: radial-gradient(white, black);
+            transform: translate(-50%, -50%) perspective(600px) rotateX(var(--tilt-y, 0deg)) rotateY(var(--tilt-x, 0deg));
         }
 
         .orb.active {
             animation: breatheOrb 16s infinite ease-in-out, morphOrb 24s infinite ease-in-out alternate;
         }
 
-        .orb::before {
-            content: '';
+        .globe-day, .globe-night {
             position: absolute;
-            top: 0; 
-            left: 0; 
-            width: 200%; 
-            height: 100%;
-            background-image: url('map.svg');
+            top: 0; left: 0; 
+            width: 400%; height: 100%; 
             background-size: 50% 100%; 
             background-repeat: repeat-x;
-            opacity: 0.15;
-            filter: invert(0.6);
-            mix-blend-mode: screen;
+            background-position: 0 center;
             will-change: transform; 
             animation: spinGlobe 40s linear infinite;
             pointer-events: none;
-            transition: opacity 8s ease-in-out;
+        }
+
+        .globe-day {
+            background-image: url('earth_daymap.jpg');
             z-index: 1;
+            opacity: 0.9;
+            transition: opacity 8s ease-in-out;
         }
 
-        .orb.active::before {
-            opacity: 0.5;
+        .orb.active .globe-day {
+            opacity: 1;
         }
 
-        .orb::after {
-            content: '';
+        .globe-shadow {
             position: absolute;
-            top: 0; 
-            left: 0; 
-            width: 100%; 
-            height: 100%;
+            top: 0; left: 0; width: 100%; height: 100%;
             border-radius: inherit;
             pointer-events: none;
             z-index: 2;
@@ -223,8 +235,36 @@
             transition: box-shadow 8s ease-in-out;
         }
 
-        .orb.active::after {
-            box-shadow: inset -15px -15px 40px rgba(0,0,0,0.8), inset 10px 10px 20px rgba(255,255,255,0.05);
+        .orb.active .globe-shadow {
+            box-shadow: 
+                inset -30px -30px 45px rgba(0, 0, 0, 0.95), 
+                inset 10px 10px 25px rgba(135, 206, 235, 0.25);
+        }
+
+        .night-wrapper {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            border-radius: inherit;
+            pointer-events: none;
+            z-index: 3;
+            -webkit-mask-image: linear-gradient(135deg, rgba(0,0,0,0) 40%, rgba(0,0,0,1) 65%);
+            mask-image: linear-gradient(135deg, rgba(0,0,0,0) 40%, rgba(0,0,0,1) 65%);
+            opacity: 0;
+            transition: opacity 8s ease-in-out;
+        }
+
+        .orb.active .night-wrapper {
+            opacity: 1;
+        }
+
+        .globe-night {
+            background-image: url('earth_nightmap.jpg');
+            mix-blend-mode: screen; 
+        }
+
+        @keyframes spinGlobe {
+            0% { transform: translateZ(0) translateX(0); }
+            100% { transform: translateZ(0) translateX(-50%); } 
         }
 
         .ripple {
@@ -246,43 +286,39 @@
             }
         }
 
-        @keyframes spinGlobe {
-            0% { transform: translateZ(0) translateX(0); }
-            100% { transform: translateZ(0) translateX(-50%); } 
-        }
-
         body.theme-space .orb.active {
-            background: radial-gradient(circle at 35% 35%, #4a4a55 0%, #15151c 50%, #000 100%);
-            box-shadow: 0 0 100px rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 80px rgba(100, 120, 255, 0.15); 
         }
 
         body.theme-ocean .orb.active {
-            background: radial-gradient(circle at 35% 35%, #2b5c75 0%, #0a1b25 50%, #000 100%);
-            box-shadow: 0 0 100px rgba(43, 92, 117, 0.15);
+            box-shadow: 0 0 100px rgba(43, 160, 210, 0.2);
         }
 
         body.theme-forest .orb.active {
-            background: radial-gradient(circle at 35% 35%, #3a5c3a 0%, #101c10 50%, #000 100%);
-            box-shadow: 0 0 100px rgba(58, 92, 58, 0.15);
+            box-shadow: 0 0 90px rgba(100, 200, 100, 0.15);
         }
 
         body.theme-sunset .orb.active {
-            background: radial-gradient(circle at 35% 35%, #8c4a35 0%, #2a110a 50%, #000 100%);
-            box-shadow: 0 0 100px rgba(140, 74, 53, 0.15);
+            box-shadow: 0 0 100px rgba(255, 120, 80, 0.15);
         }
 
         body.theme-void .orb.active {
-            background: radial-gradient(circle at 35% 35%, #1a1a1a 0%, #050505 50%, #000 100%);
-            box-shadow: 0 0 60px rgba(255, 255, 255, 0.03);
+            box-shadow: 0 0 50px rgba(255, 255, 255, 0.05);
         }
 
-        body.theme-void .orb.active::after {
-            box-shadow: inset -15px -15px 40px rgba(0,0,0,0.95), inset 5px 5px 10px rgba(255,255,255,0.02);
+        body.theme-void .orb.active .globe-shadow {
+            box-shadow: inset -35px -35px 50px rgba(0,0,0,0.98), inset 5px 5px 15px rgba(255,255,255,0.05);
         }
 
         body.theme-aurora .orb.active {
-            background: radial-gradient(circle at 35% 35%, #358c75 0%, #0f1a1d 50%, #000 100%);
-            box-shadow: 0 0 100px rgba(53, 140, 117, 0.15);
+            box-shadow: 0 0 100px rgba(80, 220, 160, 0.2);
+        }
+
+        body.theme-winter .orb.active {
+            box-shadow: 0 0 100px rgba(200, 220, 255, 0.15);
+        }
+        body.theme-magma .orb.active {
+            box-shadow: 0 0 100px rgba(255, 80, 40, 0.15);
         }
 
         .aura.active {
@@ -292,11 +328,11 @@
 
         @keyframes breatheOrb {
             0%, 100% { 
-                transform: translate(-50%, -50%) scale(0.85) rotate(-5deg); 
+                transform: translate(-50%, -50%) perspective(600px) rotateX(var(--tilt-y, 0deg)) rotateY(var(--tilt-x, 0deg)) scale(0.85) rotate(-5deg); 
                 filter: brightness(0.8);
             }
             50% { 
-                transform: translate(-50%, -50%) scale(1.2) rotate(10deg); 
+                transform: translate(-50%, -50%) perspective(600px) rotateX(var(--tilt-y, 0deg)) rotateY(var(--tilt-x, 0deg)) scale(1.2) rotate(10deg); 
                 filter: brightness(1.3);
             }
         }
@@ -647,8 +683,18 @@
 
         #sleep-blackout {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #000; z-index: 999; opacity: 0; pointer-events: none;
-            transition: opacity 60s linear;
+            background: #000; z-index: 99999; opacity: 0; pointer-events: none;
+            transition: opacity 60s linear; /* Засыпает ровно минуту */
+            display: flex; justify-content: center; align-items: center;
+        }
+
+        #sleep-goodnight {
+            color: #5c5c66; font-size: 16px; letter-spacing: 8px;
+            opacity: 0; transition: opacity 5s ease-in-out;
+        }
+
+        #sleep-blackout.show-text #sleep-goodnight {
+            opacity: 1;
         }
 
         #mobile-warning {
@@ -764,6 +810,24 @@
             0%, 100% { transform: scale(1); opacity: 0.5; }
             50% { transform: scale(1.8); opacity: 1; border-color: rgba(255, 255, 255, 0.6); }
         }
+
+        .binaural-modes {
+            display: flex; gap: 10px; width: 100%; justify-content: space-between;
+            margin-top: 5px;
+        }
+
+        .bin-btn {
+            font-size: 11px; color: #5c5c66; cursor: pointer; transition: color 0.5s;
+            text-shadow: 0 0 5px rgba(255,255,255,0);
+            text-transform: lowercase;
+            line-height: 1.2;
+        }
+
+        .bin-btn:hover, .bin-btn.active {
+            color: #ffffff;
+            text-shadow: 0 0 10px rgba(255,255,255,0.3);
+        }
+
     </style>
 </head>
 <body class="theme-space">
@@ -793,7 +857,14 @@
             <div class="wave-ring wave-2"></div>
             <div class="wave-ring wave-3"></div>
         </div>
-        <div class="orb"></div>
+
+        <div class="orb">
+            <div class="globe-day"></div>
+            <div class="globe-shadow"></div>
+            <div class="night-wrapper">
+                <div class="globe-night"></div>
+            </div>
+        </div>
         
         <div class="text-container">
             <div id="message" class="text-line"></div>
@@ -818,19 +889,19 @@
 
     <div id="controls">
         <div class="controls-group controls-left">
-            <span class="control-btn" id="panicBtn" style="color: #c45c5c; text-shadow: 0 0 10px rgba(196,92,92,0.3);">sos</span>
-            <span class="control-btn" id="breatheBtn">дыхание</span>
-            <span class="control-btn" id="letgoBtn">отпустить</span>
-            <span class="control-btn" id="fsBtn">экран</span>
-            <span class="control-btn" id="resetBtn">сброс</span>
+            <span class="control-btn" id="panicBtn" tabindex="0" role="button" style="color: #c45c5c; text-shadow: 0 0 10px rgba(196,92,92,0.3);">sos</span>
+            <span class="control-btn" id="breatheBtn" tabindex="0" role="button">дыхание</span>
+            <span class="control-btn" id="letgoBtn" tabindex="0" role="button">отпустить</span>
+            <span class="control-btn" id="fsBtn" tabindex="0" role="button">экран</span>
+            <span class="control-btn" id="resetBtn" tabindex="0" role="button">сброс</span>
         </div>
         
         <div class="controls-group controls-right">
-            <span class="control-btn" id="themeBtn">тема</span>
-            <span class="control-btn" id="trackBtn">след. трек</span>
-            <span class="control-btn" id="mixerBtn">шумы</span>
-            <span class="control-btn" id="volumeBtn">звук</span>
-            <span class="control-btn" id="timerBtn">сон</span>
+            <span class="control-btn" id="themeBtn" tabindex="0" role="button">тема</span>
+            <span class="control-btn" id="trackBtn" tabindex="0" role="button">след. трек</span>
+            <span class="control-btn" id="mixerBtn" tabindex="0" role="button">шумы</span>
+            <span class="control-btn" id="volumeBtn" tabindex="0" role="button">звук</span>
+            <span class="control-btn" id="timerBtn" tabindex="0" role="button">сон</span>
         </div>
     </div>
 
@@ -848,6 +919,18 @@
     </div>
 
     <div id="mixer-panel" class="hidden-panel">
+        <div class="mixer-item" style="flex-direction: column; align-items: flex-start; gap: 8px; font-size: 11px;">
+            <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
+                <span>бинаурал</span>
+                <input type="range" id="binauralVol" min="0" max="1" step="0.01" value="0">
+            </div>
+            <div class="binaural-modes">
+                <span class="bin-btn" data-freq="202" tabindex="0" role="button">дельта</span>
+                <span class="bin-btn active" data-freq="206" tabindex="0" role="button">тета</span>
+                <span class="bin-btn" data-freq="210" tabindex="0" role="button">альфа</span>
+            </div>
+        </div>
+        
         <div class="mixer-item">
             <span>дождь</span>
             <input type="range" id="rainVol" min="0" max="1" step="0.01" value="0">
@@ -867,10 +950,6 @@
         <div class="mixer-item">
             <span>кот</span>
             <input type="range" id="catVol" min="0" max="1" step="0.01" value="0">
-        </div>
-        <div class="mixer-item">
-            <span>бинаурал</span>
-            <input type="range" id="binauralVol" min="0" max="1" step="0.01" value="0">
         </div>
     </div>
 
@@ -896,7 +975,10 @@
     </div>
     
     <div id="thought-display"></div>
-    <div id="sleep-blackout"></div>
+
+    <div id="sleep-blackout">
+        <div id="sleep-goodnight">спокойной ночи</div>
+    </div>
     
     <footer>
     <p>© 2025–2026 Exmoril. Все права защищены. <a href="LICENSE.txt" target="_blank">Авторские права и Условия использования.</a></p>
@@ -1244,7 +1326,7 @@
             "просто позволь этому мгновению длиться вечно"
         ];
 
-        const themes = ['theme-space', 'theme-ocean', 'theme-forest', 'theme-sunset', 'theme-void', 'theme-aurora'];
+        const themes = ['theme-space', 'theme-ocean', 'theme-forest', 'theme-sunset', 'theme-void', 'theme-aurora', 'theme-winter', 'theme-magma'];
         
         const msgElement = document.getElementById('message');
         const dreamElement = document.getElementById('dreamText');
@@ -1475,9 +1557,7 @@
 
         let sessionSeconds = 0;
         let totalSeconds = parseInt(localStorage.getItem('shelterTotalSeconds')) || 0;
-        
         let cursorTimeout;
-
         let msgInterval = null;
         let dreamInterval = null;
         let breatheInterval = null;
@@ -1504,11 +1584,13 @@
             nextAudio.src = playlist[trackIndex];
             nextAudio.volume = 0;
             nextAudio.muted = isGlobalMuted;
+            let isPanicActive = document.getElementById('panic-overlay').classList.contains('show');
+            let targetVolume = isPanicActive ? MAX_VOLUME * 0.1 : MAX_VOLUME;
             
             if (document.hidden) {
                 activeAudio.pause();
                 activeAudio.currentTime = 0;
-                nextAudio.volume = MAX_VOLUME;
+                nextAudio.volume = targetVolume;
                 nextAudio.play().catch(() => {});
                 
                 let temp = activeAudio;
@@ -1522,17 +1604,15 @@
 
             const steps = 40;
             const stepTime = (CROSSFADE_TIME * 1000) / steps;
-            const volStep = MAX_VOLUME / steps;
+            const volStep = targetVolume / steps;
             let currentStep = 0;
 
             const fadeInterval = setInterval(() => {
                 currentStep++;
                 if (activeAudio.volume - volStep > 0) activeAudio.volume -= volStep;
                 else activeAudio.volume = 0;
-
-                if (nextAudio.volume + volStep < MAX_VOLUME) nextAudio.volume += volStep;
-                else nextAudio.volume = MAX_VOLUME;
-
+                if (nextAudio.volume + volStep < targetVolume) nextAudio.volume += volStep;
+                else nextAudio.volume = targetVolume;
                 if (currentStep >= steps) {
                     clearInterval(fadeInterval);
                     activeAudio.pause();
@@ -1672,7 +1752,10 @@
             cursorTimeout = setTimeout(hideInterface, 4000);
         }
         
-        document.addEventListener('mousemove', showInterface);
+        document.addEventListener('mousemove', (e) => {
+            showInterface(e);
+        });
+
         document.addEventListener('touchstart', showInterface, {passive: true});
 
         trackBtn.addEventListener('click', (e) => {
@@ -1803,7 +1886,7 @@
         const bgCat = new Audio('https://cdn.jsdelivr.net/gh/Exmoril-Neocities/Exmoril_Neocities@main/cat.mp3');
         const bowlSound = new Audio('https://cdn.jsdelivr.net/gh/Exmoril-Neocities/Exmoril_Neocities@main/bowl.mp3');
 
-        [bgOcean, bgCat].forEach(a => { a.loop = true; a.volume = 0; a.muted = isGlobalMuted; a.crossOrigin = "anonymous"; });
+        [bgRain, bgFire, bgForest, bgOcean, bgCat].forEach(a => { a.loop = true; a.volume = 0; a.muted = isGlobalMuted; a.crossOrigin = "anonymous"; });
 
         const canvas = document.getElementById('particles');
         const ctx = canvas.getContext('2d');
@@ -1881,11 +1964,10 @@
         }
 
         function animateParticles() {
+            if (!isCanvasActive) return;
             ctx.clearRect(0, 0, width, height);
-            
             for (let i = 0; i < particles.length; i++) {
                 let p = particles[i];
-
                 if (bgRain && bgRain.volume > 0.1 && i % 4 === 0) {
                     p.y += (15 * bgRain.volume);
                     ctx.fillStyle = `rgba(255, 255, 255, ${p.opacity * 0.3})`;
@@ -1922,25 +2004,32 @@
                         ctx.fillStyle = '#ffffff';
                         ctx.shadowBlur = 0;
                     }
-                    
+
                     if (currentTheme === 'theme-void') {
-                        p.y += p.speedY * 1.2;
+                        p.y += p.speedY * 0.5; 
                     } else if (currentTheme === 'theme-ocean') {
-                        p.y -= p.speedY * 1.5;
-                        p.x += Math.sin(p.angle) * p.swayAmount * 2.5;
+                        p.y -= p.speedY * 2.0;
+                        p.x += Math.sin(p.angle) * p.swayAmount * 3.5;
                     } else if (currentTheme === 'theme-forest') {
-                        p.y -= p.speedY * 0.4;
+                        p.y -= p.speedY * 0.3;
+                    } else if (currentTheme === 'theme-winter') {
+                        p.y += p.speedY * 1.5;
+                        p.x += Math.sin(p.angle) * p.swayAmount * 2.0;
+                    } else if (currentTheme === 'theme-magma') {
+                        p.y -= p.speedY * 3.5;
+                        p.x += Math.sin(p.angle) * p.swayAmount * 1.5;
                     } else {
                         p.y -= p.speedY;
                     }
                     
                     p.angle += p.swaySpeed;
                     p.x += Math.sin(p.angle) * p.swayAmount;
-                    
-                    if (currentTheme === 'theme-void' && p.y > height + 10) {
+
+                    if ((currentTheme === 'theme-void' || currentTheme === 'theme-winter') && p.y > height + 10) {
                         p.y = -10;
                         p.x = Math.random() * width;
-                    } else if (currentTheme !== 'theme-void' && p.y < -10) {
+                    }
+                    else if ((currentTheme !== 'theme-void' && currentTheme !== 'theme-winter') && p.y < -10) {
                         p.y = height + 10;
                         p.x = Math.random() * width;
                     }
@@ -2051,6 +2140,36 @@
 
         initParticles();
         animateParticles();
+
+        let isCanvasActive = true;
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                isCanvasActive = false;
+            } else {
+                isCanvasActive = true;
+                animateParticles();
+            }
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                const el = document.activeElement;
+                if (el && (el.getAttribute('role') === 'button' || el.classList.contains('control-btn') || el.classList.contains('sleep-option') || el.classList.contains('bin-btn'))) {
+                    el.click();
+                }
+            }
+        });
+
+        document.querySelectorAll('.bin-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                document.querySelectorAll('.bin-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                if (oscRight) {
+                    oscRight.frequency.value = parseFloat(btn.getAttribute('data-freq'));
+                }
+            });
+        });
 
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
@@ -2280,11 +2399,10 @@
                 e.stopPropagation();
                 document.querySelectorAll('.sleep-option').forEach(o => o.classList.remove('active'));
                 opt.classList.add('active');
-                
                 clearTimeout(sleepTimeout);
                 clearInterval(sleepFadeInterval);
                 sleepBlackout.style.opacity = '0';
-                
+                sleepBlackout.classList.remove('show-text');
                 let mins = parseInt(opt.getAttribute('data-time'));
                 let isFocus = opt.classList.contains('focus-option');
                 if (mins > 0) {
@@ -2296,9 +2414,10 @@
                         } else { 
                         sleepBlackout.style.opacity = '1';
                         let currentVol = MAX_VOLUME;
+                        let volStep = MAX_VOLUME / 50;
                         sleepFadeInterval = setInterval(() => {
-                            if (currentVol > 0.02) {
-                                currentVol -= 0.02;
+                            if (currentVol > volStep) {
+                                currentVol -= volStep;
                                 activeAudio.volume = currentVol;
                                 bgRain.volume = bgRain.volume * 0.9;
                                 bgFire.volume = bgFire.volume * 0.9;
@@ -2310,6 +2429,7 @@
                                 isGlobalMuted = true;
                                 activeAudio.muted = true;
                                 clearInterval(sleepFadeInterval);
+                                sleepBlackout.classList.add('show-text'); 
                             }
                         }, 1200);
                     }
@@ -2451,6 +2571,7 @@
                 mixerPanel.classList.remove('show');
                 sleepPanel.classList.remove('show');
                 volumePanel.classList.remove('show');
+                breathePanel.classList.remove('show');
             }
             if (thoughtInput.value.trim() === '') thoughtOverlay.classList.remove('show');
         });
@@ -2553,6 +2674,12 @@
             e.stopPropagation();
             panicOverlay.classList.add('show');
             if(activeAudio) activeAudio.volume = MAX_VOLUME * 0.1;
+            bgRain.volume *= 0.1;
+            bgFire.volume *= 0.1;
+            bgForest.volume *= 0.1;
+            bgOcean.volume *= 0.1;
+            bgCat.volume *= 0.1;
+            if (binauralGain) binauralGain.gain.value *= 0.1;
             panicPhase = 0;
             runPanicCycle();
             panicInterval = setInterval(runPanicCycle, 4000);
@@ -2562,6 +2689,12 @@
             panicOverlay.classList.remove('show');
             clearInterval(panicInterval);
             if(activeAudio) activeAudio.volume = MAX_VOLUME;
+            bgRain.volume = document.getElementById('rainVol').value;
+            bgFire.volume = document.getElementById('fireVol').value;
+            bgForest.volume = document.getElementById('forestVol').value;
+            bgOcean.volume = document.getElementById('oceanVol').value;
+            bgCat.volume = document.getElementById('catVol').value;
+            if (binauralGain) binauralGain.gain.value = document.getElementById('binauralVol').value * 0.1;
         });
     </script>
 </body>
