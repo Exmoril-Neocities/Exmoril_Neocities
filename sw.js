@@ -1,4 +1,4 @@
-const CACHE_NAME = 'shelter-cache-v16';
+const CACHE_NAME = 'shelter-cache-v17';
 const urlsToCache = [
     '/',
     '/index.html',
@@ -50,6 +50,10 @@ const urlsToCache = [
     "https://cdn.jsdelivr.net/gh/Exmoril-Neocities/Exmoril_Neocities@main/music/music37.mp3",
     "https://cdn.jsdelivr.net/gh/Exmoril-Neocities/Exmoril_Neocities@main/music/music38.mp3",
     "https://cdn.jsdelivr.net/gh/Exmoril-Neocities/Exmoril_Neocities@main/music/music39.mp3",
+    "https://cdn.jsdelivr.net/gh/Exmoril-Neocities/Exmoril_Neocities@main/music/music40.mp3",
+    "https://cdn.jsdelivr.net/gh/Exmoril-Neocities/Exmoril_Neocities@main/music/music41.mp3",
+    "https://cdn.jsdelivr.net/gh/Exmoril-Neocities/Exmoril_Neocities@main/music/music42.mp3",
+    "https://cdn.jsdelivr.net/gh/Exmoril-Neocities/Exmoril_Neocities@main/music/music43.mp3",
     "https://cdn.jsdelivr.net/gh/Exmoril-Neocities/Exmoril_Neocities@main/rain.mp3",
     "https://cdn.jsdelivr.net/gh/Exmoril-Neocities/Exmoril_Neocities@main/fire.mp3",
     "https://cdn.jsdelivr.net/gh/Exmoril-Neocities/Exmoril_Neocities@main/crickets.mp3",
