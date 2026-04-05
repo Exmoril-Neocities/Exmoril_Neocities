@@ -2138,10 +2138,11 @@
             aura.style.marginTop = shiftY + 'px';
         }, {passive: true});
 
+        let isCanvasActive = true;
+        
         initParticles();
         animateParticles();
 
-        let isCanvasActive = true;
         document.addEventListener('visibilitychange', () => {
             if (document.hidden) {
                 isCanvasActive = false;
