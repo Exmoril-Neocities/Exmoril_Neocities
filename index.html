@@ -2439,6 +2439,12 @@
                 } else {
                     timerBtn.textContent = 'сон';
                     activeAudio.volume = MAX_VOLUME;
+                    bgRain.volume = document.getElementById('rainVol').value;
+                    bgFire.volume = document.getElementById('fireVol').value;
+                    bgForest.volume = document.getElementById('forestVol').value;
+                    bgOcean.volume = document.getElementById('oceanVol').value;
+                    bgCat.volume = document.getElementById('catVol').value;
+                    if (binauralGain) binauralGain.gain.value = document.getElementById('binauralVol').value * 0.1;
                 }
                 setTimeout(() => sleepPanel.classList.remove('show'), 500);
             });
