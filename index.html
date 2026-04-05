@@ -176,6 +176,9 @@
             background: radial-gradient(circle at 40% 40%, #2a2a30 0%, #050507 60%, #000 100%);
             box-shadow: 0 0 40px rgba(255, 255, 255, 0.01); 
             transition: all 8s ease-in-out;
+            overflow: hidden; 
+            -webkit-mask-image: -webkit-radial-gradient(white, black);
+            mask-image: radial-gradient(white, black);
         }
 
         .orb.active {
@@ -187,21 +190,41 @@
             position: absolute;
             top: 0; 
             left: 0; 
-            width: 100%; 
+            width: 200%; 
             height: 100%;
-            border-radius: inherit;
             background-image: url('map.svg');
-            background-size: 200% 100%;
+            background-size: 50% 100%; 
+            background-repeat: repeat-x;
             opacity: 0.15;
-            filter: invert(1);
-            mix-blend-mode: overlay;
+            filter: invert(0.6);
+            mix-blend-mode: screen;
+            will-change: transform; 
             animation: spinGlobe 40s linear infinite;
             pointer-events: none;
             transition: opacity 8s ease-in-out;
+            z-index: 1;
         }
 
         .orb.active::before {
-            opacity: 0.35;
+            opacity: 0.5;
+        }
+
+        .orb::after {
+            content: '';
+            position: absolute;
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%;
+            border-radius: inherit;
+            pointer-events: none;
+            z-index: 2;
+            box-shadow: inset 0 0 0 rgba(0,0,0,0);
+            transition: box-shadow 8s ease-in-out;
+        }
+
+        .orb.active::after {
+            box-shadow: inset -15px -15px 40px rgba(0,0,0,0.8), inset 10px 10px 20px rgba(255,255,255,0.05);
         }
 
         .ripple {
@@ -215,6 +238,7 @@
             pointer-events: none;
             z-index: 15;
         }
+        
         @keyframes ripple-anim {
             to {
                 transform: scale(25);
@@ -223,33 +247,42 @@
         }
 
         @keyframes spinGlobe {
-            0% { background-position: 0% 0; }
-            100% { background-position: -200% 0; }
+            0% { transform: translateZ(0) translateX(0); }
+            100% { transform: translateZ(0) translateX(-50%); } 
         }
 
         body.theme-space .orb.active {
             background: radial-gradient(circle at 35% 35%, #4a4a55 0%, #15151c 50%, #000 100%);
-            box-shadow: inset -15px -15px 40px rgba(0,0,0,0.8), inset 10px 10px 20px rgba(255,255,255,0.05), 0 0 100px rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 100px rgba(255, 255, 255, 0.08);
         }
+
         body.theme-ocean .orb.active {
             background: radial-gradient(circle at 35% 35%, #2b5c75 0%, #0a1b25 50%, #000 100%);
-            box-shadow: inset -15px -15px 40px rgba(0,0,0,0.8), inset 10px 10px 20px rgba(255,255,255,0.05), 0 0 100px rgba(43, 92, 117, 0.15);
+            box-shadow: 0 0 100px rgba(43, 92, 117, 0.15);
         }
+
         body.theme-forest .orb.active {
             background: radial-gradient(circle at 35% 35%, #3a5c3a 0%, #101c10 50%, #000 100%);
-            box-shadow: inset -15px -15px 40px rgba(0,0,0,0.8), inset 10px 10px 20px rgba(255,255,255,0.05), 0 0 100px rgba(58, 92, 58, 0.15);
+            box-shadow: 0 0 100px rgba(58, 92, 58, 0.15);
         }
+
         body.theme-sunset .orb.active {
             background: radial-gradient(circle at 35% 35%, #8c4a35 0%, #2a110a 50%, #000 100%);
-            box-shadow: inset -15px -15px 40px rgba(0,0,0,0.8), inset 10px 10px 20px rgba(255,255,255,0.05), 0 0 100px rgba(140, 74, 53, 0.15);
+            box-shadow: 0 0 100px rgba(140, 74, 53, 0.15);
         }
+
         body.theme-void .orb.active {
             background: radial-gradient(circle at 35% 35%, #1a1a1a 0%, #050505 50%, #000 100%);
-            box-shadow: inset -15px -15px 40px rgba(0,0,0,0.95), inset 5px 5px 10px rgba(255,255,255,0.02), 0 0 60px rgba(255, 255, 255, 0.03);
+            box-shadow: 0 0 60px rgba(255, 255, 255, 0.03);
         }
+
+        body.theme-void .orb.active::after {
+            box-shadow: inset -15px -15px 40px rgba(0,0,0,0.95), inset 5px 5px 10px rgba(255,255,255,0.02);
+        }
+
         body.theme-aurora .orb.active {
             background: radial-gradient(circle at 35% 35%, #358c75 0%, #0f1a1d 50%, #000 100%);
-            box-shadow: inset -15px -15px 40px rgba(0,0,0,0.8), inset 10px 10px 20px rgba(255,255,255,0.05), 0 0 100px rgba(53, 140, 117, 0.15);
+            box-shadow: 0 0 100px rgba(53, 140, 117, 0.15);
         }
 
         .aura.active {
